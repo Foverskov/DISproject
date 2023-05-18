@@ -59,8 +59,8 @@ def generate_member():
 def generate_members(amount, of):
     with open(of, "w") as file:
         writer = csv.writer(file)
-        writer.writerow(["cpr", "name", "age", "address", "phone_number", "email"])
+        writer.writerow(["mid","cpr", "name", "age", "address", "phone_number", "email"])
         for i in range(amount):
-            writer.writerow(generate_member())
+            writer.writerow([i] + generate_member())
 
 generate_members(100, "members.csv")

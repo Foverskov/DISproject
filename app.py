@@ -20,12 +20,12 @@ def index():
 def medlemmer():
     conn = psycopg2.connect(
         host="localhost", port="5433",
-        database="foverskov",
+        database="postgres",
         user="postgres",
         password="postgres"
     )
     cur = conn.cursor()
-    cur.execute("SELECT * FROM medlemmer")
+    cur.execute("SELECT * FROM members")
     rows = cur.fetchall()
 
     page = "<table><tr><th>Medlems ID</th><th>Navn</th><th>Alder</th><th>Adresse</th><th>Telefon</th><th>Email</th></tr>"

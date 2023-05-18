@@ -14,19 +14,19 @@ cur = conn.cursor()
 # Reset and create tables
 cur.execute(
     '''
-    DROP TABLE IF EXISTS Members; \
-    DROP TABLE IF EXISTS Employees; \
-    DROP TABLE IF EXISTS Facilities; \
-    DROP TABLE IF EXISTS Teams; \
+    DROP TABLE IF EXISTS Members CASCADE; \
+    DROP TABLE IF EXISTS Employees CASCADE; \
+    DROP TABLE IF EXISTS Facilities CASCADE; \
+    DROP TABLE IF EXISTS Teams CASCADE; \
     DROP TABLE IF EXISTS Memberships; \
-    DROP TABLE IF EXISTS Bookings; \
+    DROP TABLE IF EXISTS Bookings CASCADE; \
     DROP TABLE IF EXISTS Calendar; \
     DROP TABLE IF EXISTS Manage; \
     DROP TABLE IF EXISTS HourlyEmployees; \
     DROP TABLE IF EXISTS SalariedEmployees; \
     CREATE TABLE Members \
     (mid INT PRIMARY KEY, \
-    ssn INT, \
+    ssn TEXT, \
     name TEXT, \
     age INT, \
     address TEXT, \
@@ -35,7 +35,7 @@ cur.execute(
     ); \
     CREATE TABLE Employees \
     (eid INT PRIMARY KEY, \
-    ssn INT, \
+    ssn TEXT, \
     name TEXT, \
     age INT, \
     address TEXT, \
@@ -121,6 +121,8 @@ cur.execute(
     INSERT INTO Facilities VALUES ('Hovedvejen 4', 'Squash', 'Squash court');
     '''
 )
+import_members()
+import_employees()
 
 # commit the changes
 conn.commit()
