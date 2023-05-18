@@ -12,8 +12,26 @@ conn = psycopg2.connect(
     password="postgres"
 )
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    # create a cursor
+    cur = conn.cursor()
+  
+    # Select all products from the table
+    cur.execute('''SELECT * FROM teaches''')
+  
+    # Fetch the data
+    data = cur.fetchall()
+  
+    # close the cursor and connection
+    """ cur.close()
+    conn.close() """
+  
+    return render_template('index.html', data=data)
+
+
+@app.route('/read', methods=['GET'])
+def read():
     # Connect to the database
     conn = psycopg2.connect(
         host="localhost", port="5433",
@@ -21,7 +39,6 @@ def index():
         user="postgres",
         password="postgres"
 )
-  
     # create a cursor
     cur = conn.cursor()
   
@@ -35,4 +52,4 @@ def index():
     cur.close()
     conn.close()
   
-    return render_template('index.html', data=data)
+    return render_template('read.html', data=data)
