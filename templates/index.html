@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <h1>Index</h1>
+    {% block content %}
+    <h1>{% block title %} Books {% endblock %}</h1>
+    {% for teaching in teaches %}
+        <div class='teaches'>
+            <h2>{{ teaching.lecturer }}</h2>
+            <h3>{{ teaching.course }}</h3>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+</html>
