@@ -6,25 +6,27 @@ app = Flask(__name__)
 
 # Connect to the database
 conn = psycopg2.connect(
-    host="localhost",
-    database="postgres",
+    host="localhost", port="5433",
+    database="foverskov",
     user="postgres",
     password="postgres"
 )
 
-@app.route('/')
+@app.route('/create', methods=['GET', 'POST'])
 def index():
     # Connect to the database
-    conn = psycopg2.connect(database="postgres",
-                            user="postgres",
-                            password="postgres",
-                            host="localhost", port="5433")
+    conn = psycopg2.connect(
+        host="localhost", port="5433",
+        database="foverskov",
+        user="postgres",
+        password="postgres"
+)
   
     # create a cursor
     cur = conn.cursor()
   
     # Select all products from the table
-    cur.execute('''SELECT * FROM products''')
+    cur.execute('''SELECT * FROM teaches''')
   
     # Fetch the data
     data = cur.fetchall()
