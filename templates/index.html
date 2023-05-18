@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% extends "base.html" %}
 
     <h1>Index</h1>
+    
     {% block content %}
     <h1>{% block title %} Books {% endblock %}</h1>
     {% for teaching in teaches %}
