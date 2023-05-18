@@ -48,6 +48,7 @@ def generate_cpr():
 
 def generate_member():
     data = []
+    data.append(random.randint(100000, 999999))
     data.append(generate_cpr())
     data.append(generate_name(get_csv_data(navne_csv), get_csv_data(efternavne_csv)))
     data.append(random.randint(8, 99))
@@ -59,8 +60,9 @@ def generate_member():
 def generate_members(amount, of):
     with open(of, "w") as file:
         writer = csv.writer(file)
-        writer.writerow(["mid","cpr", "name", "age", "address", "phone_number", "email"])
+        writer.writerow(["mid", "cpr", "name", "age", "address", "phone_number", "email"])
         for i in range(amount):
-            writer.writerow([i] + generate_member())
+            writer.writerow(generate_member())
 
 generate_members(100, "members.csv")
+generate_members(10, "employees.csv")
