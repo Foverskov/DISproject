@@ -1,8 +1,9 @@
 import psycopg2
 import csv
+import os
 
-members_csv = "members.csv"
-employees_csv = "employees.csv"
+members_csv = os.join("data", "members.csv")
+employees_csv = os.join("data", "employees.csv")
 
 # Connect to the database
 conn = psycopg2.connect(database="flask_db", user="postgres",
