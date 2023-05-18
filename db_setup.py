@@ -2,12 +2,12 @@ import psycopg2
 import csv
 import os
 
-members_csv = os.join("data", "members.csv")
-employees_csv = os.join("data", "employees.csv")
+members_csv = os.path.join("data", "members.csv")
+employees_csv = os.path.join("data", "employees.csv")
 
 # Connect to the database
-conn = psycopg2.connect(database="flask_db", user="postgres",
-                        password="root", host="localhost", port="5432")
+conn = psycopg2.connect(database="postgres", user="postgres",
+                        password="postgres", host="localhost", port="5433")
 # create a cursor
 cur = conn.cursor()
 
@@ -31,7 +31,7 @@ cur.execute(
     age INT, \
     address TEXT, \
     telephone TEXT, \
-    email TEXT, \
+    email TEXT \
     ); \
     CREATE TABLE Employees \
     (eid INT PRIMARY KEY, \
@@ -40,18 +40,18 @@ cur.execute(
     age INT, \
     address TEXT, \
     telephone TEXT, \
-    email TEXT, \
+    email TEXT \
     ); \
     CREATE TABLE Facilities \
     (address TEXT PRIMARY KEY, \
     name TEXT, \
-    description TEXT, \
+    description TEXT \
     ); \
     CREATE TABLE Teams \
     (tid INT PRIMARY KEY, \
     name TEXT, \
     time TEXT, \
-    price INT, \
+    price INT \
     ); \
     CREATE TABLE Memberships \
     (mid INT, \
@@ -60,7 +60,7 @@ cur.execute(
     to_date DATE, \
     PRIMARY KEY (mid, tid), \
     FOREIGN KEY (mid) REFERENCES Members(mid), \
-    FOREIGN KEY (tid) REFERENCES Teams(tid), \
+    FOREIGN KEY (tid) REFERENCES Teams(tid) \
     ); \
     CREATE TABLE Bookings \
     (bid INT, \
@@ -71,10 +71,13 @@ cur.execute(
     FOREIGN KEY (address) REFERENCES Facilities(address) \
     ); \
     CREATE TABLE Calendar \
-    (bid INT PRIMARY KEY, \
-    from_datetime DATETIME, \
-    to_datetime DATETIME, \
-    FOREIGN KEY (bid) REFERENCES Bookings(bid) \
+    (bid INT, \
+    tid INT, \
+    address TEXT, \
+    PRIMARY KEY (bid, tid, address), \
+    from_datetime TIMESTAMP, \
+    to_datetime TIMESTAMP, \
+    FOREIGN KEY (bid,tid,address) REFERENCES Bookings(bid,tid,address) \
     ); \
     CREATE TABLE Manage \
     (tid INT, \
@@ -93,7 +96,7 @@ cur.execute(
     (eid INT PRIMARY KEY, \
     salary INT, \
     FOREIGN KEY (eid) REFERENCES Employees(eid) \
-    );
+    );\
     ''')
 
 def import_members():
