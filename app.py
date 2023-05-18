@@ -4,35 +4,40 @@ import psycopg2
 
 app = Flask(__name__)
 
-# Connect to the database
-conn = psycopg2.connect(
-    host="localhost", port="5433",
-    database="foverskov",
-    user="postgres",
-    password="postgres"
-)
-
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    # Connect to the database
+    page = """
+    <h1>Velkommen til vores side</h1>
+    <p>Her kan du se vores medlemmer, ansatte, faciliteter, hold, medlemskaber og bookinger</p>
+    <a href="/medlemmer">Medlemmer</a>
+    <a href="/hold">Holdstruktur</a>
+    <a href="/faciliteter">Faciliteter</a>
+    <a href="/mail">Beskeder</a>
+    """
+    return page
+
+@app.route('/medlemmer')
+def medlemmer():
     conn = psycopg2.connect(
         host="localhost", port="5433",
         database="foverskov",
         user="postgres",
         password="postgres"
-)
-  
-    # create a cursor
+    )
     cur = conn.cursor()
-  
-    # Select all products from the table
-    cur.execute('''SELECT * FROM teaches''')
-  
-    # Fetch the data
-    data = cur.fetchall()
-  
-    # close the cursor and connection
+    cur.execute("SELECT * FROM medlemmer")
+    rows = cur.fetchall()
+
+    page = "<table><tr><th>Medlems ID</th><th>Navn</th><th>Alder</th><th>Adresse</th><th>Telefon</th><th>Email</th></tr>"
+
+    for row in rows:
+        page += "<tr>"
+        for col in row:
+            page += "<td>" + str(col) + "</td>"
+        page += "</tr>"
+    page += "</table>"
+
     cur.close()
     conn.close()
-  
-    return render_template('index.html', data=data)
+
+    return page
