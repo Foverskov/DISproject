@@ -31,6 +31,7 @@ def index():
     """
     return page
 
+
 @app.route('/medlemmer')
 def medlemmer():
     conn = connect_db()
@@ -38,16 +39,97 @@ def medlemmer():
     cur.execute("SELECT * FROM members")
     rows = cur.fetchall()
 
-    page = "<table><tr><th>Medlems ID</th><th>CPR</th><th>Navn</th><th>Alder</th><th>Adresse</th><th>Telefon</th><th>Email</th></tr>"
+    page = ""
+    page += """
+    <style>
+     table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    </style>
+    """
+
+    page += """
+    <form action="add_medlem" method = "POST">
+        <table>
+            <tr>
+                <th>
+                <input type = "submit" value = "Tilføj" />
+                </th>
+                <th>
+                <input type = "text" name = "mid" />
+                </th>
+                <th>
+                <input type = "text" name = "cpr" />
+                </th>
+                <th>
+                <input type = "text" name = "name" />
+                </th>
+                <th>
+                <input type = "text" name = "age" />
+                </th>
+                <th>
+                <input type = "text" name = "addr" />
+                </th>
+                <th>
+                <input type = "text" name = "tel" />
+                </th>
+                <th>
+                <input type = "text" name = "email" />
+                </th>
+            </tr>
+    </form>
+            <tr>
+                <th>DELETE</th>
+                <th>Medlems ID</th>
+                <th>CPR</th>
+                <th>Navn</th>
+                <th>Alder</th>
+                <th>Adresse</th>
+                <th>Telefon</th>
+                <th>Email</th>
+            </tr>
+    <form action="remove_medlem" method = "POST">
+    """
 
     for row in rows:
-        page += "<tr>"
+        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
         for col in row:
             page += "<td>" + str(col) + "</td>"
         page += "</tr>"
-    page += "</table>"
+
+    page += "</form></table>"
 
     cur.close()
     conn.close()
 
     return page
+
+
+@app.route('/add_medlem', methods=['POST'])
+def add_medlem():
+    form_data = request.form
+    print(form_data)
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO members VALUES ({int(form_data['mid'])}, '{form_data['cpr']}', '{form_data['name']}', {int(form_data['age'])}, '{form_data['addr']}', '{form_data['tel']}', '{form_data['email']}');")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('medlemmer'))
+
+@app.route('/remove_medlem', methods=['POST'])
+def remove_medlem():
+    form_data = request.form
+    to_delete = list(form_data.keys())[0]
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM members WHERE mid = {to_delete};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('medlemmer'))
