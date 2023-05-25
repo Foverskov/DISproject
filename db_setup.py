@@ -1,13 +1,21 @@
 import psycopg2
 import csv
 import os
+import configparser
 
 members_csv = os.path.join("data", "members.csv")
 employees_csv = os.path.join("data", "employees.csv")
 
 # Connect to the database
-conn = psycopg2.connect(database="postgres", user="postgres",
-                        password="postgres", host="localhost", port="5433")
+# check if config file exists
+if not os.path.isfile('config.ini'):
+    raise Exception('config.ini not found. Please create it from config.ini.example')
+config = configparser.ConfigParser()
+config.read('config.ini')
+db = config['DB_LOGIN']
+conn = psycopg2.connect(database=db['database'], user=db['user'],
+                        password=db['password'], host=db['host'], port=db['port'])
+
 # create a cursor
 cur = conn.cursor()
 

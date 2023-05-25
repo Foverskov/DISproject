@@ -54,7 +54,7 @@ def generate_member():
     data.append(random.randint(8, 99))
     data.append(generate_address(get_csv_data(vejnavne_csv)))
     data.append(generate_phone_number())
-    data.append(generate_email(data[1].split(" ")[0]))
+    data.append(generate_email(data[2].split(" ")[0]))
     return data
 
 def generate_members(amount, of):
