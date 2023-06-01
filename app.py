@@ -50,6 +50,8 @@ def medlemmer():
     """
 
     page += """
+    <a href="/">Tilbage</a>
+    <h1>Medlemmer</h1>
     <form action="add_medlem" method = "POST">
         <table>
             <tr>
