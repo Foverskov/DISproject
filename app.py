@@ -158,7 +158,7 @@ Data:
 Faciliteter
 Data:
     - Faciliteter: name, addr
-    - Rent: booking, addr, from, to, tid
+    - Bookings: from, to, tid, addr
 
 Features:
     - Filtrering på dato, addresse, availablity

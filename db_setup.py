@@ -20,15 +20,15 @@ conn = psycopg2.connect(database=db['database'], user=db['user'],
 cur = conn.cursor()
 
 # Reset and create tables
+# Note: Time and dates are in unix time
 cur.execute(
     '''
     DROP TABLE IF EXISTS Members CASCADE; \
     DROP TABLE IF EXISTS Employees CASCADE; \
     DROP TABLE IF EXISTS Facilities CASCADE; \
     DROP TABLE IF EXISTS Teams CASCADE; \
-    DROP TABLE IF EXISTS Memberships; \
     DROP TABLE IF EXISTS Bookings CASCADE; \
-    DROP TABLE IF EXISTS Calendar; \
+    DROP TABLE IF EXISTS Memberships; \
     DROP TABLE IF EXISTS Manage; \
     DROP TABLE IF EXISTS HourlyEmployees; \
     DROP TABLE IF EXISTS SalariedEmployees; \
@@ -64,28 +64,20 @@ cur.execute(
     CREATE TABLE Memberships \
     (mid INT, \
     tid INT, \
-    from_date DATE, \
-    to_date DATE, \
+    from_date INT, \
+    to_date INT, \
     PRIMARY KEY (mid, tid), \
     FOREIGN KEY (mid) REFERENCES Members(mid), \
     FOREIGN KEY (tid) REFERENCES Teams(tid) \
     ); \
     CREATE TABLE Bookings \
-    (bid INT, \
-    tid INT, \
+    (tid INT, \
     address TEXT, \
-    PRIMARY KEY (bid, tid, address), \
+    from_date INT, \
+    to_date INT, \
+    PRIMARY KEY (tid, address, from_date, to_date), \
     FOREIGN KEY (tid) REFERENCES Teams(tid), \
     FOREIGN KEY (address) REFERENCES Facilities(address) \
-    ); \
-    CREATE TABLE Calendar \
-    (bid INT, \
-    tid INT, \
-    address TEXT, \
-    PRIMARY KEY (bid, tid, address), \
-    from_datetime TIMESTAMP, \
-    to_datetime TIMESTAMP, \
-    FOREIGN KEY (bid,tid,address) REFERENCES Bookings(bid,tid,address) \
     ); \
     CREATE TABLE Manage \
     (tid INT, \
