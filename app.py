@@ -32,6 +32,11 @@ def index():
     return page
 
 
+"""
+Medlemmer
+Data: 
+    - Members: mid, cpr, name, age, addr, tel, email
+"""
 @app.route('/medlemmer')
 def medlemmer():
     conn = connect_db()
@@ -107,7 +112,6 @@ def medlemmer():
 
     return page
 
-
 @app.route('/add_medlem', methods=['POST'])
 def add_medlem():
     form_data = request.form
@@ -135,3 +139,27 @@ def remove_medlem():
     conn.close()
 
     return redirect(url_for('medlemmer'))
+
+"""
+Hold
+Data:
+    - Hold: tid, name
+    - members: mid(count)
+    - Employee: name
+
+Detalje underside.
+Data:
+    - Members: mid, name
+    - In: from, to
+"""
+
+
+"""
+Faciliteter
+Data:
+    - Faciliteter: name, addr
+    - Rent: booking, addr, from, to, tid
+
+Features:
+    - Filtrering på dato, addresse, availablity
+"""
