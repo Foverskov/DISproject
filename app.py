@@ -156,6 +156,149 @@ Data:
     - In: from, to
 """
 
+@app.route('/hold')
+def hold():
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("""
+    SELECT t.tid, t.name, t.time, t.price, COUNT(m.mid)
+    FROM Teams t
+    LEFT JOIN Memberships ms ON t.tid = ms.tid
+    LEFT JOIN Members m ON ms.mid = m.mid
+    GROUP BY t.tid, t.name;
+    """)
+    rows = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+     table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    </style>
+    """
+
+    page += """
+    <a href="/">Tilbage</a>
+    <h1>Hold</h1>
+        <table>
+            <tr>
+                <th>Hold ID</th>
+                <th>Holdnavn</th>
+                <th>Tid</th>
+                <th>Pris</th>
+                <th>Medlemmer</th>
+                <th>Detaljer</th>
+            </tr>
+    <form action="team_details" method = "POST">
+    """
+
+    for row in rows:
+        page += "<tr>"
+        for col in row:
+            page += "<td>" + str(col) + "</td>"
+        page += f"""<td><input type = "submit" name = "{row[0]}" value = "Detaljer"/></td>"""
+        page += "</tr>"
+
+    page += "</form></table>"
+
+    cur.close()
+    conn.close()
+
+    return page
+
+@app.route('/team_details', methods=['POST'])
+def team_details():
+    form_data = request.form
+    team_id = list(form_data.keys())[0]
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+                SELECT m.mid, ms.from_date, ms.to_date, m.name, m.age, m.ssn, m.address, m.telephone, m.email FROM Members m 
+                LEFT JOIN Memberships ms ON m.mid = ms.mid 
+                WHERE ms.tid = {team_id};
+                """)
+    rows = cur.fetchall()
+    cur.execute(f"""
+                SELECT t.name FROM Teams t
+                WHERE t.tid = {team_id}; 
+                """)
+    team_name = cur.fetchall()[0][0]
+
+
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+
+    page += f"""
+    <a href="/hold">Tilbage</a>
+    <h1>Hold {team_name}</h1>
+
+
+    <table>
+        <tr>
+            <form action="add_team_member" method = "POST">
+            <th><input type = "submit" value = "Tilføj" /></th>
+            <th><input type = "text" name = "mid" /></th>
+            <th><input type = "text" name = "from_date" /></th>
+            <th><input type = "text" name = "to_date" /></th>
+            <input type = "hidden" name = "tid" value = "{team_id}" />
+            </form>
+        </tr>
+        <tr>
+            <th>Fjern</th>
+            <th>Medlems ID</th>
+            <th>Startdato</th>
+            <th>Slutdato</th>
+            <th>Navn</th>
+            <th>Alder</th>
+            <th>CPR</th>
+            <th>Adresse</th>
+            <th>Telefon</th>
+            <th>Email</th>
+        </tr>
+        <form action="remove_team_member" method = "POST">    
+    """
+
+    for row in rows:
+        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+        for col in row:
+            page += "<td>" + str(col) + "</td>"
+        page += "</tr>"
+    
+    page += "</form></table>"
+
+    cur.close()
+    conn.close()
+
+    return page
+
+@app.route('/add_team_member', methods=['POST'])
+def add_team_member():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+                INSERT INTO Memberships (mid, tid, from_date, to_date) 
+                VALUES ({form_data['mid']}, {form_data['tid']}, {form_data['from_date']}, {form_data['to_date']});
+                """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+
 
 """
 Faciliteter
