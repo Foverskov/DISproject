@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import psycopg2
 import configparser
 import os
+from datetime import datetime
 
 # python -m flask --app app.py run
 
@@ -143,9 +144,11 @@ def remove_medlem():
 """
 Hold
 Data:
-    - Hold: tid, name
-    - members: mid(count)
-    - Employee: name
+    - Teams: tid, name
+    - Memberships:
+    - Members: mid(count)
+    - Manages:
+    - Employees: name
 
 Detalje underside.
 Data:
@@ -159,7 +162,65 @@ Faciliteter
 Data:
     - Faciliteter: name, addr
     - Bookings: from, to, tid, addr
+    - Teams: tid, name
 
 Features:
     - Filtrering på dato, addresse, availablity
 """
+
+@app.route('/faciliteter')
+def faciliteter():
+
+
+    #SELECT f.name AS facility_name, b.from_date, b.to_date
+    #FROM Bookings b
+    #JOIN Teams t ON b.tid = t.tid
+    #JOIN Facilities f ON b.address = f.address;
+
+    #INSERT INTO Bookings (tid, address, from_date, to_date)
+    #VALUES (1, 'Hovedvejen 1', 1, 5);
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT f.name, t.name, b.from_date, b.to_date \
+        FROM Bookings b \
+        JOIN Teams t ON b.tid = t.tid \
+        JOIN Facilities f ON b.address = f.address; \
+    """)
+    rows = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+     table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    </style>
+    """
+    page += """
+    <a href="/">Tilbage</a>
+    <h1>Faciliteter</h1>
+    <table>
+        <tr>
+            <th>Facilitet</th>
+            <th>Hold</th>
+            <th>Start</th>
+            <th>Slut</th>
+        <tr>
+    """
+    print(rows)
+    for row in rows:
+            page += "<td>" + str(row[0]) + "</td>"
+            page += "<td>" + str(row[1]) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[2]))) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[3]))) + "</td>"
+            page += "</tr>"
+
+    page += "</table>"
+
+    cur.close()
+    conn.close()
+
+    return page
