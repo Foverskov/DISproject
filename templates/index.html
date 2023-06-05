@@ -2,16 +2,15 @@
 <html lang="en">
     {% extends "base.html" %}
 
-    <h1>Index</h1>
+    {% block title %} Clubhus {% endblock %}
     
     {% block content %}
-    <h1>{% block title %} Books {% endblock %}</h1>
-    {% for teaching in teaches %}
-        <div class='teaches'>
-            <h2>{{ teaching.lecturer }}</h2>
-            <h3>{{ teaching.course }}</h3>
-        </div>
-    {% endfor %}
-{% endblock %}
+    <h1>Velkommen til vores side</h1>
+    <p>Her kan du se vores medlemmer, ansatte, faciliteter, hold, medlemskaber og bookinger</p>
+    <a href="/medlemmer">Medlemmer</a>
+    <a href="/hold">Holdstruktur</a>
+    <a href="/faciliteter">Faciliteter</a>
+    <a href="/mail">Beskeder</a>
+    {% endblock %}
 
 </html>
