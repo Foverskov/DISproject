@@ -381,7 +381,6 @@ Features:
 @app.route('/faciliteter')
 def faciliteter():
 
-
     #SELECT f.name AS facility_name, b.from_date, b.to_date
     #FROM Bookings b
     #JOIN Teams t ON b.tid = t.tid
@@ -398,7 +397,9 @@ def faciliteter():
         JOIN Teams t ON b.tid = t.tid \
         JOIN Facilities f ON b.address = f.address; \
     """)
-    rows = cur.fetchall()
+    bookings = cur.fetchall()
+    cur.execute("SELECT * FROM Facilities;")
+    facilities = cur.fetchall()
 
     page = ""
     page += """
@@ -412,6 +413,40 @@ def faciliteter():
     page += """
     <a href="/">Tilbage</a>
     <h1>Faciliteter</h1>
+    """
+
+    # Facilitet oversigt
+    page += """
+    <h2>Faciliteter</h2>
+    <table>
+        <form action="add_facility" method = "POST">
+        <tr>
+            <th><input type = "text" name = "addr" /></th>
+            <th><input type = "text" name = "name" /></th>
+            <th><input type = "text" name = "description" /></th>
+            <th><input type = "submit" value = "Tilføj"/></th>
+        </tr>
+        </form>
+        <tr>
+            <th>Adresse</th>
+            <th>Navn</th>
+            <th>Beskrivelse</th>
+            <th>Bookings</th>
+        <tr>
+        <form action="facility_details" method = "POST">
+    """
+    for row in facilities:
+            page += "<td>" + str(row[0]) + "</td>"
+            page += "<td>" + str(row[1]) + "</td>"
+            page += "<td>" + str(row[2]) + "</td>"
+            page += "<td><input type = 'submit' value = 'Book' name = '" + str(row[0]) + "'/></td>"
+            page += "</tr>"
+    page += "</form></table>"
+
+    # Bookings oversigt
+
+    page += """
+    <h2>Bookings</h2>
     <table>
         <tr>
             <th>Facilitet</th>
@@ -420,8 +455,7 @@ def faciliteter():
             <th>Slut</th>
         <tr>
     """
-    print(rows)
-    for row in rows:
+    for row in bookings:
             page += "<td>" + str(row[0]) + "</td>"
             page += "<td>" + str(row[1]) + "</td>"
             page += "<td>" + str(datetime.fromtimestamp(int(row[2]))) + "</td>"
@@ -434,3 +468,16 @@ def faciliteter():
     conn.close()
 
     return page
+
+@app.route('/add_facility', methods=['POST'])
+def add_facility():
+    form_data = request.form
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute(f"INSERT INTO Facilities (address, name, description) VALUES ('{form_data['addr']}', '{form_data['name']}', '{form_data['description']}');")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('faciliteter'))
