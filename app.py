@@ -185,6 +185,17 @@ def hold():
     <a href="/">Tilbage</a>
     <h1>Hold</h1>
         <table>
+            <form action="add_team" method = "POST">
+            <tr>
+                <th><input type = "text" name = "tid" /></th>
+                <th><input type = "text" name = "name" /></th>
+                <th><input type = "text" name = "time" /></th>
+                <th><input type = "text" name = "price" /></th>
+                <th></th>
+                <th><input type = "submit" value = "Tilføj" /></th>
+            </tr>
+            </form>
+
             <tr>
                 <th>Hold ID</th>
                 <th>Holdnavn</th>
@@ -209,6 +220,18 @@ def hold():
     conn.close()
 
     return page
+
+@app.route('/add_team', methods=['POST'])
+def add_team():
+    form_data = request.form
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO teams (tid, name, time, price) VALUES ({int(form_data['tid'])}, '{form_data['name']}', '{form_data['time']}', {int(form_data['price'])});")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
 
 @app.route('/team_details', methods=['POST'])
 def team_details():
@@ -244,6 +267,10 @@ def team_details():
     page += f"""
     <a href="/hold">Tilbage</a>
     <h1>Hold {team_name}</h1>
+    <form action="delete_team" method = "POST">
+    <input type = "hidden" name = "tid" value = "{team_id}" />
+    <input type = "submit" value = "Slet hold" />
+    </form>
 
 
     <table>
@@ -283,6 +310,22 @@ def team_details():
     conn.close()
 
     return page
+
+@app.route('/delete_team', methods=['POST'])
+def delete_team():
+    form_data = request.form
+    team_id = form_data['tid']
+
+    conn = connect_db()
+    cur = conn.cursor()
+    # TODO: Dette kan nok gøres smartere
+    cur.execute(f"DELETE FROM Memberships WHERE tid = {team_id};")
+    cur.execute(f"DELETE FROM Teams WHERE tid = {team_id};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
 
 @app.route('/add_team_member', methods=['POST'])
 def add_team_member():
