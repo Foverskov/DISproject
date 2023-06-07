@@ -299,11 +299,17 @@ def team_details():
     """
 
     for row in rows:
-        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-        for col in row:
-            page += "<td>" + str(col) + "</td>"
-        page += "</tr>"
-    
+            page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+            page += "<td>" + str(row[0]) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[1])).strftime('%d/%m-%Y')) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y')) + "</td>"
+            page += "<td>" + str(row[3]) + "</td>"
+            page += "<td>" + str(row[4]) + "</td>"
+            page += "<td>" + str(row[5]) + "</td>"
+            page += "<td>" + str(row[6]) + "</td>"
+            page += "<td>" + str(row[7]) + "</td>"
+            page += "<td>" + str(row[8]) + "</td>"
+            page += "</tr>"
     page += "</form></table>"
 
     cur.close()
@@ -333,9 +339,14 @@ def add_team_member():
 
     conn = connect_db()
     cur = conn.cursor()
+
+    #! Datoer skal være i format dd/mm-yyyy
+    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
+    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+
     cur.execute(f"""
                 INSERT INTO Memberships (mid, tid, from_date, to_date) 
-                VALUES ({form_data['mid']}, {form_data['tid']}, {form_data['from_date']}, {form_data['to_date']});
+                VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});
                 """)
     conn.commit()
     cur.close()
@@ -343,7 +354,18 @@ def add_team_member():
 
     return redirect(url_for('hold'))
 
+@app.route('/remove_team_member', methods=['POST'])
+def remove_team_member():
+    form_data = request.form
 
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
 
 """
 Faciliteter
