@@ -542,7 +542,7 @@ def add_team_member():
     <h1>Tilføj medlem til hold</h1>
     <table>
         <tr>
-            <form action = "add_team_member" method = POST >
+            <form action = "add_team_member" method = "POST" >
             <input type = "hidden" name = "tid" value = "{team_id}" />
             <input type = "submit" value = "SØG" />
             <input type = "text" name = "name" />
@@ -555,13 +555,14 @@ def add_team_member():
         <form action="add_member_to_team" method = "POST">
         <input type = "text" name = "from_date" />
         <input type = "text" name = "to_date" />
+
     """
     for row in rows:
         page += f"""<tr><td>
         <input type = "hidden" name = "mid" value = "{row[0]}" />
         <input type = "hidden" name = "tid" value = "{team_id}" />
         <input type = "submit" name = "Tilføj" value = "Tilføj" />
-        </form></td>
+        </td>
         """
         page += "<td>" + str(row[0]) + "</td>"
         page += "<td>" + str(row[1]) + "</td>"
@@ -571,7 +572,11 @@ def add_team_member():
         page += "<td>" + str(row[5]) + "</td>"
         page += "<td>" + str(row[6]) + "</td>"
         page += "</tr>"
-    page += "</table>"
+
+    page += """
+            </form>
+    </table>
+    """
 
     cur.close()
     conn.close() 
