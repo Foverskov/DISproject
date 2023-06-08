@@ -369,19 +369,14 @@ def team_details():
     <form action="delete_team" method = "POST">
     <input type = "hidden" name = "tid" value = "{team_id}" />
     <input type = "submit" value = "Slet hold" />
+    </form>"""
+
+    page += f"""
+    <form action="add_team_member" method = "POST">
+    <input type = "submit" value = "Tilføj medlem" />
     </form>
 
-
-    <table>
-        <tr>
-            <form action="add_team_member" method = "POST">
-            <th><input type = "submit" value = "Tilføj" /></th>
-            <th><input type = "text" name = "mid" /></th>
-            <th><input type = "text" name = "from_date" /></th>
-            <th><input type = "text" name = "to_date" /></th>
-            <input type = "hidden" name = "tid" value = "{team_id}" />
-            </form>
-        </tr>
+     <table>
         <tr>
             <th>Fjern</th>
             <th>Medlems ID</th>
@@ -394,7 +389,7 @@ def team_details():
             <th>Telefon</th>
             <th>Email</th>
         </tr>
-        <form action="remove_team_member" method = "POST">    
+        <form action="remove_team_member" method = "POST">
     """
 
     for row in rows:
@@ -440,18 +435,27 @@ def add_team_member():
     cur = conn.cursor()
 
     #! Datoer skal være i format dd/mm-yyyy
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+    #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
+    #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
 
-    cur.execute(f"""
-                INSERT INTO Memberships (mid, tid, from_date, to_date) 
-                VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});
-                """)
-    conn.commit()
+    page = ""
+    page += """
+    <h1>Tilføj medlem til hold</h1>
+    <table>
+        <tr>
+            <form >
+            <input type = "submit" value = "SØG" />
+            <input type = "text" name = "name" />
+            </form>
+        </tr>
+    """
+
     cur.close()
-    conn.close()
+    conn.close() 
+    
+    return page 
 
-    return redirect(url_for('hold'))
+
 
 @app.route('/remove_team_member', methods=['POST'])
 def remove_team_member():
