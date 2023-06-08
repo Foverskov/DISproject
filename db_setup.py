@@ -124,6 +124,32 @@ cur.execute(
 import_members()
 import_employees()
 
+# Create a trigger, which ensures, that all expired memberships will be removed
+cur.execute(
+    '''
+    CREATE OR REPLACE FUNCTION remove_expired_manage()
+        RETURNS TRIGGER AS $$
+    BEGIN
+        DELETE FROM Manage
+        WHERE tid = NEW.tid
+            AND eid IN (
+            SELECT eid
+            FROM Manage
+            WHERE tid = NEW.tid
+                AND to_date < EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::bigint
+            );
+
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER remove_expired_manage_trigger
+    BEFORE INSERT OR UPDATE ON Memberships
+    FOR EACH ROW
+    EXECUTE FUNCTION remove_expired_manage();
+    '''
+)
+
 # commit the changes
 conn.commit()
   
