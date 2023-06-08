@@ -747,3 +747,100 @@ def add_facility():
 
     return redirect(url_for('faciliteter'))
 
+@app.route('/facility_details', methods=['POST'])
+def facility_details():
+    form_data = request.form
+    vej = list(form_data.keys())[0]
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+    cur.execute(f"""
+                SELECT t.name, t.tid, b.from_date, b.to_date \
+                FROM Bookings b \
+                JOIN Teams t ON b.tid = t.tid \
+                WHERE b.address = '{vej}'; \
+                """)
+    bookings = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+    page += f"""
+    <a href="/faciliteter">Tilbage</a>
+    <h1>Facilitet på {vej}</h1>
+    
+    <table>
+    <form action="add_booking" method = "POST">
+        <tr>
+            <td></td>
+            <td><input type = "text" name = "tid" /></td>
+            <input type = "hidden" name = "address" value = "{vej}" />
+            <td><input type = "text" name = "from_date" /></td>
+            <td><input type = "text" name = "to_date" /></td>
+            <td><input type = "submit" value = "Tilføj"/></td>
+        </tr>
+    </form>
+        <tr>
+            <th>Hold navn</th>
+            <th>Hold id</th>
+            <th>Start tidspunkt</th>
+            <th>Slut tidspunkt</th>
+            <th>Slet</th>
+        <tr>
+    <form action="delete_booking" method = "POST">
+    """
+
+    for row in bookings:
+        page += "<tr>"
+        page += f"<td>{row[0]}</td>"
+        page += f"<td>{row[1]}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M'))}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M'))}</td>"
+        page += f"""<td><input type = "submit" name = "{(vej,row[1],row[2],row[3])}" value = "X"/></td>"""
+        page += "</tr>"
+    
+    page += "</form></table>"
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return page
+
+@app.route('/add_booking', methods=['POST'])
+def add_booking():
+    form_data = request.form
+    conn = connect_db()
+    cur = conn.cursor()
+
+    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y %H:%M').strftime("%s")
+    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y %H:%M').strftime("%s")
+
+    cur.execute(f"INSERT INTO Bookings (tid, address, from_date, to_date) VALUES ('{form_data['tid']}', '{form_data['address']}', '{from_date}', '{to_date}');")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('faciliteter'))
+
+@app.route('/delete_booking', methods=['POST'])
+def delete_booking():
+    form_data = request.form
+    conn = connect_db()
+    cur = conn.cursor()
+
+    addr, tid, from_time, to_time = eval(list(form_data.keys())[0])
+
+    cur.execute(f"DELETE FROM Bookings WHERE tid = {tid} AND address = '{addr}' AND from_date = {from_time} AND to_date = {to_time};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('faciliteter'))
