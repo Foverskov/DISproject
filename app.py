@@ -643,12 +643,12 @@ def faciliteter():
     conn = connect_db()
     cur = conn.cursor()
 
-    if request.method == 'GET':
-        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y').strftime("%s")
-        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y').strftime("%s")
+    if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
+        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
+        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
     else:
-        booking_from_date = '-Infinity'
-        booking_to_date = 'Infinity'
+        booking_from_date = -9223372036854775807 # Min int
+        booking_to_date = 9223372036854775807 # Max int
 
     cur.execute(f"""
         SELECT f.name, t.name, b.from_date, b.to_date \
@@ -723,8 +723,8 @@ def faciliteter():
     for row in bookings:
             page += "<td>" + str(row[0]) + "</td>"
             page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[2]))) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[3]))) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
             page += "</tr>"
 
     page += "</table>"
