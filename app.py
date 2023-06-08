@@ -587,7 +587,7 @@ def add_team_member():
         page += "<td>" + str(row[5]) + "</td>"
         page += "<td>" + str(row[6]) + "</td>"
         page += "</tr>"
-    page += "</form></table>"
+    page += "</table></form>"
 
     cur.close()
     conn.close() 
@@ -597,17 +597,29 @@ def add_team_member():
 @app.route('/add_member_to_team', methods=['POST'])
 def add_member_to_team():
     form_data = request.form
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m/%Y').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m/%Y').strftime("%s")
+    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
+    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+    
+    # Retrieve member ID and team ID from the form data
+    member_id = form_data.get('mid')
+    team_id = form_data.get('tid')
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO Memberships VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});")
-    conn.commit()
-    cur.close()
-    conn.close()
 
-    return redirect(url_for('hold'))
+    # Check if member ID and team ID are valid
+    if member_id is not None and team_id is not None:
+        cur.execute(f"INSERT INTO Memberships VALUES ({member_id}, {team_id}, {from_date}, {to_date});")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect(url_for('hold'))
+    else:
+        # Handle the case where member ID or team ID is missing
+        error_message = "Invalid member ID or team ID."
+        return render_template('error.html', error=error_message)
+
+
 
 @app.route('/add_team_employee', methods=['POST'])
 def add_team_employee():
