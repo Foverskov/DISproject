@@ -61,6 +61,7 @@ def medlemmer():
                 <th><input type = "text" name = "addr" /></th>
                 <th><input type = "text" name = "tel" /></th>
                 <th><input type = "text" name = "email" /></th>
+                <th></th>
             </tr>
     </form>
             <tr>
@@ -72,6 +73,7 @@ def medlemmer():
                 <th>Adresse</th>
                 <th>Telefon</th>
                 <th>Email</th>
+                <th>Se hold</th>
             </tr>
     <form action="remove_medlem" method = "POST">
     """
@@ -80,6 +82,7 @@ def medlemmer():
         page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
         for col in row:
             page += "<td>" + str(col) + "</td>"
+        page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
         page += "</tr>"
 
     page += "</form></table>"
@@ -116,6 +119,58 @@ def remove_medlem():
     conn.close()
 
     return redirect(url_for('medlemmer'))
+
+@app.route('/medlem/<mid>')
+def medlem(mid):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+    SELECT t.tid, t.name, t.time, t.price, ms.from_date, ms.to_date
+    FROM Teams t
+    LEFT JOIN Memberships ms ON t.tid = ms.tid
+    LEFT JOIN Members m ON ms.mid = m.mid
+    WHERE m.mid = {mid};
+    """)
+    rows = cur.fetchall()
+    cur.execute(f"SELECT name, mid FROM members WHERE mid = {mid};")
+    name = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+
+    page += f"""
+    <a href="/medlemmer">Tilbage</a>
+    <h1>Medlem: {name[0][0]} ({name[0][1]})</h1>
+    <table>
+        <tr>
+            <th>Hold ID</th>
+            <th>Hold navn</th>
+            <th>Tidspunkt</th>
+            <th>Pris</th>
+            <th>Start dato</th>
+            <th>Slut dato</th>
+        </tr>
+    """
+
+    for row in rows:
+        page += "<tr>"
+        page += f"<td>{row[0]}</td>"
+        page += f"<td>{row[1]}</td>"
+        page += f"<td>{row[2]}</td>"
+        page += f"<td>{row[3]}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y'))}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[5])).strftime('%d/%m-%Y'))}</td>"
+        page += "</tr>"
+    
+    return page
+       
 
 """
 Hold
