@@ -514,7 +514,7 @@ def delete_team():
 
     return redirect(url_for('hold'))
 
-@app.route('/add_team_member', methods=['POST'])
+@app.route('/add_team_member', methods=['GET','POST'])
 def add_team_member():
     form_data = request.form
 
@@ -524,11 +524,14 @@ def add_team_member():
     if request.method == 'GET':
         mname = request.args.get('name', '')
         cur.execute(f"""
-                SELECT mid, name, age, m.ssn, m.address, m.telephone, m.email FROM members m
-                WHERE m.name = {mname} ;
+                SELECT mid, name, age, ssn, address, telephone, email FROM members 
+                WHERE name LIKE '{mname}%' ;
                 """)
+        rows = cur.fetchall()
     else:
         mname = ''
+        cur.execute(f""" SELECT mid, name, age, ssn, address, telephone, email FROM members; """)
+        rows = cur.fetchall()
     
     
     #! Datoer skal være i format dd/mm-yyyy
@@ -546,13 +549,58 @@ def add_team_member():
             <input type = "text" name = "name" />
             </form>
         </tr>
+    </table>
+
+    <table>
     """
+    for row in rows:
+        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "Tilføj" /></td>"""
+        page += "<td>" + str(row[0]) + "</td>"
+        page += "<td>" + str(row[1]) + "</td>"
+        page += "<td>" + str(row[2]) + "</td>"
+        page += "<td>" + str(row[3]) + "</td>"
+        page += "<td>" + str(row[4]) + "</td>"
+        page += "<td>" + str(row[5]) + "</td>"
+        page += "<td>" + str(row[6]) + "</td>"
+        page += "</tr>"
+    page += "</table>"
 
     cur.close()
     conn.close() 
     
     return page 
 
+@app.route('/add_member', methods=['POST'])
+def add_member():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO  FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+@app.route('/add_team_employee', methods=['POST'])
+def add_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+
+    cur.execute(f"""
+                INSERT INTO Manage (eid, tid)
+                VALUES ({form_data['eid']}, {form_data['tid']});
+                """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
 
 
 @app.route('/remove_team_member', methods=['POST'])
@@ -580,6 +628,7 @@ def add_team_employee():
                 INSERT INTO Manage (eid, tid)
                 VALUES ({form_data['eid']}, {form_data['tid']});
                 """)
+
     conn.commit()
     cur.close()
     conn.close()
