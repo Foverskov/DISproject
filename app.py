@@ -663,11 +663,12 @@ def faciliteter():
         booking_to_date = 9223372036854775807 # Max int
 
     cur.execute(f"""
-        SELECT f.name, t.name, b.from_date, b.to_date \
+        SELECT f.address, f.name, t.name, b.from_date, b.to_date \
         FROM Bookings b \
         JOIN Teams t ON b.tid = t.tid \
         JOIN Facilities f ON b.address = f.address \
-        WHERE b.from_date >= {booking_from_date} AND b.to_date <= {booking_to_date}; \
+        WHERE ({booking_from_date} <= b.from_date AND b.from_date <= {booking_to_date})  \
+        OR ({booking_from_date} <= b.to_date AND b.to_date <= {booking_to_date}) ; \
     """)
     bookings = cur.fetchall()
     cur.execute("SELECT * FROM Facilities;")
@@ -724,8 +725,15 @@ def faciliteter():
     filter to: <input type = "text" name = "to_date" />
     <input type = "submit" value = "Filtrer"/>
     </form>
+    """
+
+    if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
+        page += "<p>Filtrer fra: " + request.args.get('from_date', '') + " Til: " + request.args.get('to_date', '') + "</p>"
+
+    page += """
     <table>
         <tr>
+            <th>Adresse</th>
             <th>Facilitet</th>
             <th>Hold</th>
             <th>Start</th>
@@ -735,8 +743,9 @@ def faciliteter():
     for row in bookings:
             page += "<td>" + str(row[0]) + "</td>"
             page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+            page += "<td>" + str(row[2]) + "</td>"
             page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M')) + "</td>"
             page += "</tr>"
 
     page += "</table>"
