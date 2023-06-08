@@ -525,22 +525,22 @@ Features:
 
 @app.route('/faciliteter')
 def faciliteter():
-
-    #SELECT f.name AS facility_name, b.from_date, b.to_date
-    #FROM Bookings b
-    #JOIN Teams t ON b.tid = t.tid
-    #JOIN Facilities f ON b.address = f.address;
-
-    #INSERT INTO Bookings (tid, address, from_date, to_date)
-    #VALUES (1, 'Hovedvejen 1', 1, 5);
-
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute("""
+
+    if request.method == 'GET':
+        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y').strftime("%s")
+        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y').strftime("%s")
+    else:
+        booking_from_date = '-Infinity'
+        booking_to_date = 'Infinity'
+
+    cur.execute(f"""
         SELECT f.name, t.name, b.from_date, b.to_date \
         FROM Bookings b \
         JOIN Teams t ON b.tid = t.tid \
-        JOIN Facilities f ON b.address = f.address; \
+        JOIN Facilities f ON b.address = f.address \
+        WHERE b.from_date >= {booking_from_date} AND b.to_date <= {booking_to_date}; \
     """)
     bookings = cur.fetchall()
     cur.execute("SELECT * FROM Facilities;")
@@ -592,6 +592,11 @@ def faciliteter():
 
     page += """
     <h2>Bookings</h2>
+    <form action="faciliteter" method = "GET">
+    filter from: <input type = "text" name = "from_date" />
+    filter to: <input type = "text" name = "to_date" />
+    <input type = "submit" value = "Filtrer"/>
+    </form>
     <table>
         <tr>
             <th>Facilitet</th>
@@ -626,3 +631,4 @@ def add_facility():
     conn.close()
 
     return redirect(url_for('faciliteter'))
+
