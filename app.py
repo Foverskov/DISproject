@@ -396,6 +396,12 @@ def team_details():
                 WHERE t.tid = {team_id}; 
                 """)
     team_name = cur.fetchall()[0][0]
+    cur.execute(f"""
+                SELECT e.eid, e.name, e.age, e.telephone, e.email 
+                FROM Employees e LEFT JOIN Manage m ON e.eid = m.eid 
+                WHERE m.tid = {team_id};
+                """)
+    team_employee = cur.fetchall()
 
 
 
@@ -451,6 +457,41 @@ def team_details():
             page += "<td>" + str(row[8]) + "</td>"
             page += "</tr>"
     page += "</form></table>"
+
+
+    # Holdets trænere
+    page += f"""
+    <h1>Trænere for {team_name}</h1>
+
+    <table>
+        <tr>
+            <form action="add_team_employee" method = "POST">
+            <th><input type = "submit" value = "Tilføj" /></th>
+            <th><input type = "text" name = "eid" /></th>
+            <input type = "hidden" name = "tid" value = "{team_id}" />
+            </form>
+        </tr>
+        <tr>
+            <th>Fjern</th>
+            <th>Træner ID</th>
+            <th>Navn</th>
+            <th>Alder</th>
+            <th>Telefon</th>
+            <th>Email</th>
+        </tr>
+        <form action="remove_team_employee" method = "POST">    
+    """
+
+    for row in team_employee:
+            page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+            page += "<td>" + str(row[0]) + "</td>"
+            page += "<td>" + str(row[1]) + "</td>"
+            page += "<td>" + str(row[2]) + "</td>"
+            page += "<td>" + str(row[3]) + "</td>"
+            page += "<td>" + str(row[4]) + "</td>"
+            page += "</tr>"
+    page += "</form></table>"
+
 
     cur.close()
     conn.close()
@@ -521,6 +562,37 @@ def remove_team_member():
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+@app.route('/add_team_employee', methods=['POST'])
+def add_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+
+    cur.execute(f"""
+                INSERT INTO Manage (eid, tid)
+                VALUES ({form_data['eid']}, {form_data['tid']});
+                """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+@app.route('/remove_team_employee', methods=['POST'])
+def remove_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM Manage WHERE eid = {list(form_data.keys())[0]};")
     conn.commit()
     cur.close()
     conn.close()
