@@ -797,6 +797,11 @@ def facility_details():
     <a href="/faciliteter">Tilbage</a>
     <h1>Facilitet på {vej}</h1>
     
+    <form action="delete_facility" method = "POST">
+        <input type = "hidden" name = "address" value = "{vej}" />
+        <input type = "submit" value = "Slet"/>
+    </form>
+
     <table>
     <form action="add_booking" method = "POST">
         <tr>
@@ -834,6 +839,22 @@ def facility_details():
     conn.close()
 
     return page
+
+@app.route('/delete_facility', methods=['POST'])
+def delete_facility():
+    form_data = request.form
+    address = form_data['address']
+
+    conn = connect_db()
+    cur = conn.cursor()
+    # TODO: Dette kan nok gøres smartere
+    cur.execute(f"DELETE FROM Bookings WHERE address = '{address}';")
+    cur.execute(f"DELETE FROM Facilities WHERE address = '{address}';")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('faciliteter'))
 
 @app.route('/add_booking', methods=['POST'])
 def add_booking():
