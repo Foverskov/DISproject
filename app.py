@@ -482,8 +482,14 @@ def add_team_member():
 
     if request.method == 'GET':
         mname = request.args.get('name', '')
+        cur.execute(f"""
+                SELECT mid, name, age, m.ssn, m.address, m.telephone, m.email FROM members m
+                WHERE m.name = {mname} ;
+                """)
     else:
         mname = ''
+    
+    
     #! Datoer skal være i format dd/mm-yyyy
     #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
     #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
@@ -500,11 +506,6 @@ def add_team_member():
             </form>
         </tr>
     """
-
-    cur.execute(f"""
-                SELECT mid, name, age, m.ssn, m.address, m.telephone, m.email FROM members m
-                WHERE m.name = {mname} ;
-                """)
 
     cur.close()
     conn.close() 
