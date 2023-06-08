@@ -425,6 +425,7 @@ def team_details():
 
     page += f"""
     <form action="add_team_member" method = "POST">
+    <input type = "hidden" name = "tid" value = "{team_id}" />
     <input type = "submit" value = "Tilføj medlem" />
     </form>
 
@@ -518,6 +519,8 @@ def delete_team():
 def add_team_member():
     conn = connect_db()
     cur = conn.cursor()
+    form_data = request.form
+    team_id = form_data['tid']
 
     if request.method == 'GET':
         mname = request.args.get('name', '')
@@ -537,12 +540,13 @@ def add_team_member():
     #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
 
     page = ""
-    page += """
+
+    page += f"""
+    <h1>Tilføj medlem til hold: {team_id}</h1>
     <h1>Tilføj medlem til hold</h1>
     <table>
         <tr>
             <form action = "add_team_member" method = GET >
-            <
             <input type = "submit" value = "SØG" />
             <input type = "text" name = "name" />
             </form>
@@ -552,7 +556,13 @@ def add_team_member():
     <table>
     """
     for row in rows:
-        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "Tilføj" /></td>"""
+        page += f"""<tr><td>
+        <form action="add_member_to_team" method = "POST">
+        <input type = "hidden" name = "mid" value = "{row[0]}" />
+        <input type = "hidden" name = "tid" value = "{team_id}" />
+        <input type = "submit" name = "Tilføj" value = "Tilføj" />
+        </form></td>
+        """
         page += "<td>" + str(row[0]) + "</td>"
         page += "<td>" + str(row[1]) + "</td>"
         page += "<td>" + str(row[2]) + "</td>"
@@ -571,11 +581,13 @@ def add_team_member():
 @app.route('/add_member_to_team', methods=['POST'])
 def add_member_to_team():
     form_data = request.form
+    #team_id = form_data['tid']
+    #member_id = form_data['mid']
 
     conn = connect_db()
     cur = conn.cursor()
-    #cur.execute(f"INSERT INTO Memberships ;")
-    #conn.commit()
+    cur.execute(f"INSERT INTO Memberships VALUES ({form_data['mid']},{1},0,0) ;")
+    conn.commit()
     cur.close()
     conn.close()
 
