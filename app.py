@@ -509,6 +509,7 @@ def delete_team():
     cur = conn.cursor()
     # TODO: Dette kan nok gøres smartere
     cur.execute(f"DELETE FROM Memberships WHERE tid = {team_id};")
+    cur.execute(f"DELETE FROM Manage WHERE tid = {team_id};")
     cur.execute(f"DELETE FROM Teams WHERE tid = {team_id};")
     conn.commit()
     cur.close()
