@@ -25,16 +25,6 @@ def index():
     page = render_template('index.html')
     return page
 
-    # """
-    # <h1>Velkommen til vores side</h1>
-    # <p>Her kan du se vores medlemmer, ansatte, faciliteter, hold, medlemskaber og bookinger</p>
-    # <a href="/medlemmer">Medlemmer</a>
-    # <a href="/hold">Holdstruktur</a>
-    # <a href="/faciliteter">Faciliteter</a>
-    # <a href="/mail">Beskeder</a>
-    # """
-
-
 """
 Medlemmer
 Data: 
