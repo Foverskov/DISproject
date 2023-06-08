@@ -33,7 +33,7 @@ cur.execute(
     DROP TABLE IF EXISTS HourlyEmployees; \
     DROP TABLE IF EXISTS SalariedEmployees; \
     CREATE TABLE Members \
-    (mid INT PRIMARY KEY, \
+    (mid SERIAL PRIMARY KEY, \
     ssn TEXT, \
     name TEXT, \
     age INT, \
@@ -42,7 +42,7 @@ cur.execute(
     email TEXT \
     ); \
     CREATE TABLE Employees \
-    (eid INT PRIMARY KEY, \
+    (eid SERIAL PRIMARY KEY, \
     ssn TEXT, \
     name TEXT, \
     age INT, \
@@ -56,22 +56,22 @@ cur.execute(
     description TEXT \
     ); \
     CREATE TABLE Teams \
-    (tid INT PRIMARY KEY, \
+    (tid SERIAL PRIMARY KEY, \
     name TEXT, \
     time TEXT, \
     price INT \
     ); \
     CREATE TABLE Memberships \
-    (mid INT, \
-    tid INT, \
-    from_date INT, \
-    to_date INT, \
+    (mid SERIAL, \
+    tid SERIAL, \
+    from_date BIGINT, \
+    to_date BIGINT, \
     PRIMARY KEY (mid, tid), \
     FOREIGN KEY (mid) REFERENCES Members(mid), \
     FOREIGN KEY (tid) REFERENCES Teams(tid) \
     ); \
     CREATE TABLE Bookings \
-    (tid INT, \
+    (tid SERIAL, \
     address TEXT, \
     from_date INT, \
     to_date INT, \
@@ -80,20 +80,20 @@ cur.execute(
     FOREIGN KEY (address) REFERENCES Facilities(address) \
     ); \
     CREATE TABLE Manage \
-    (tid INT, \
-    eid INT, \
+    (tid SERIAL, \
+    eid SERIAL, \
     PRIMARY KEY (tid, eid), \
     FOREIGN KEY (tid) REFERENCES Teams(tid), \
     FOREIGN KEY (eid) REFERENCES Employees(eid) \
     ); \
     CREATE TABLE HourlyEmployees \
-    (eid INT PRIMARY KEY, \
+    (eid SERIAL PRIMARY KEY, \
     hourly_rate INT, \
     hours_worked INT, \
     FOREIGN KEY (eid) REFERENCES Employees(eid) \
     ); \
     CREATE TABLE SalariedEmployees \
-    (eid INT PRIMARY KEY, \
+    (eid SERIAL PRIMARY KEY, \
     salary INT, \
     FOREIGN KEY (eid) REFERENCES Employees(eid) \
     );\
@@ -104,14 +104,14 @@ def import_members():
         reader = csv.reader(f)
         next(reader) # Skip the header row.
         for row in reader:
-            cur.execute("INSERT INTO Members VALUES (%s, %s, %s, %s, %s, %s, %s)",row)
+            cur.execute("INSERT INTO Members VALUES (DEFAULT, %s, %s, %s, %s, %s, %s)",row[1:])
 
 def import_employees():
     with open(employees_csv, 'r') as f:
         reader = csv.reader(f)
         next(reader) # Skip the header row.
         for row in reader:
-            cur.execute("INSERT INTO Employees VALUES (%s, %s, %s, %s, %s, %s, %s)",row)
+            cur.execute("INSERT INTO Employees VALUES (DEFAULT, %s, %s, %s, %s, %s, %s)",row[1:])
 
 cur.execute(
     '''

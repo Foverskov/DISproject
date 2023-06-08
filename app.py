@@ -53,30 +53,14 @@ def medlemmer():
     <form action="add_medlem" method = "POST">
         <table>
             <tr>
-                <th>
-                <input type = "submit" value = "Tilføj" />
-                </th>
-                <th>
-                <input type = "text" name = "mid" />
-                </th>
-                <th>
-                <input type = "text" name = "cpr" />
-                </th>
-                <th>
-                <input type = "text" name = "name" />
-                </th>
-                <th>
-                <input type = "text" name = "age" />
-                </th>
-                <th>
-                <input type = "text" name = "addr" />
-                </th>
-                <th>
-                <input type = "text" name = "tel" />
-                </th>
-                <th>
-                <input type = "text" name = "email" />
-                </th>
+                <th><input type = "submit" value = "Tilføj" /></th>
+                <th></th>
+                <th> <input type = "text" name = "cpr" /></th>
+                <th><input type = "text" name = "name" /> </th>
+                <th><input type = "text" name = "age" /> </th>
+                <th><input type = "text" name = "addr" /></th>
+                <th><input type = "text" name = "tel" /></th>
+                <th><input type = "text" name = "email" /></th>
             </tr>
     </form>
             <tr>
@@ -112,7 +96,7 @@ def add_medlem():
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO members VALUES ({int(form_data['mid'])}, '{form_data['cpr']}', '{form_data['name']}', {int(form_data['age'])}, '{form_data['addr']}', '{form_data['tel']}', '{form_data['email']}');")
+    cur.execute(f"INSERT INTO members VALUES (DEFAULT, '{form_data['cpr']}', '{form_data['name']}', {int(form_data['age'])}, '{form_data['addr']}', '{form_data['tel']}', '{form_data['email']}');")
     conn.commit()
     cur.close()
     conn.close()
@@ -122,11 +106,11 @@ def add_medlem():
 @app.route('/remove_medlem', methods=['POST'])
 def remove_medlem():
     form_data = request.form
-    to_delete = list(form_data.keys())[0]
+    mid = list(form_data.keys())[0]
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"DELETE FROM members WHERE mid = {to_delete};")
+    cur.execute(f"DELETE FROM members WHERE mid = {mid};")
     conn.commit()
     cur.close()
     conn.close()
@@ -177,7 +161,7 @@ def hold():
         <table>
             <form action="add_team" method = "POST">
             <tr>
-                <th><input type = "text" name = "tid" /></th>
+                <th></th>
                 <th><input type = "text" name = "name" /></th>
                 <th><input type = "text" name = "time" /></th>
                 <th><input type = "text" name = "price" /></th>
@@ -216,7 +200,7 @@ def add_team():
     form_data = request.form
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO teams (tid, name, time, price) VALUES ({int(form_data['tid'])}, '{form_data['name']}', '{form_data['time']}', {int(form_data['price'])});")
+    cur.execute(f"INSERT INTO teams (tid, name, time, price) VALUES (DEFAULT, '{form_data['name']}', '{form_data['time']}', {int(form_data['price'])});")
     conn.commit()
     cur.close()
     conn.close()
