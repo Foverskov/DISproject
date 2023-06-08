@@ -426,6 +426,7 @@ def team_details():
     page += f"""
     <form action="add_team_member" method = "POST">
     <input type = "hidden" name = "tid" value = "{team_id}" />
+    <input type = "hidden" name = "name" value = "" />
     <input type = "submit" value = "Tilføj medlem" />
     </form>
 
@@ -515,25 +516,20 @@ def delete_team():
 
     return redirect(url_for('hold'))
 
-@app.route('/add_team_member', methods=['GET','POST'])
+@app.route('/add_team_member', methods=['POST'])
 def add_team_member():
     conn = connect_db()
     cur = conn.cursor()
     form_data = request.form
-    team_id = form_data['tid']
 
-    if request.method == 'GET':
-        mname = request.args.get('name', '')
-        cur.execute(f"""
-                SELECT mid, name, age, ssn, address, telephone, email FROM members 
-                WHERE name LIKE '{mname}%' ;
-                """)
-        rows = cur.fetchall()
-    else:
-        mname = ''
-        cur.execute(f""" SELECT mid, name, age, ssn, address, telephone, email FROM members; """)
-        rows = cur.fetchall()
-    
+    team_id = form_data['tid']
+    mname = form_data['name']
+
+    cur.execute(f"""
+            SELECT mid, name, age, ssn, address, telephone, email FROM members 
+            WHERE name LIKE '{mname}%' ;
+            """)
+    rows = cur.fetchall()
     
     #! Datoer skal være i format dd/mm-yyyy
     #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
@@ -546,18 +542,22 @@ def add_team_member():
     <h1>Tilføj medlem til hold</h1>
     <table>
         <tr>
-            <form action = "add_team_member" method = GET >
+            <form action = "add_team_member" method = POST >
+            <input type = "hidden" name = "tid" value = "{team_id}" />
             <input type = "submit" value = "SØG" />
             <input type = "text" name = "name" />
+            
             </form>
         </tr>
     </table>
 
     <table>
+        <form action="add_member_to_team" method = "POST">
+        <input type = "text" name = "from_date" />
+        <input type = "text" name = "to_date" />
     """
     for row in rows:
         page += f"""<tr><td>
-        <form action="add_member_to_team" method = "POST">
         <input type = "hidden" name = "mid" value = "{row[0]}" />
         <input type = "hidden" name = "tid" value = "{team_id}" />
         <input type = "submit" name = "Tilføj" value = "Tilføj" />
@@ -581,12 +581,12 @@ def add_team_member():
 @app.route('/add_member_to_team', methods=['POST'])
 def add_member_to_team():
     form_data = request.form
-    #team_id = form_data['tid']
-    #member_id = form_data['mid']
+    from_date = datetime.strptime(form_data['from_date'], '%d/%m/%Y').strftime("%s")
+    to_date = datetime.strptime(form_data['to_date'], '%d/%m/%Y').strftime("%s")
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO Memberships VALUES ({form_data['mid']},{1},0,0) ;")
+    cur.execute(f"INSERT INTO Memberships VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});")
     conn.commit()
     cur.close()
     conn.close()
