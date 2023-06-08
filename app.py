@@ -65,6 +65,7 @@ def medlemmer():
                 <th><input type = "text" name = "addr" /></th>
                 <th><input type = "text" name = "tel" /></th>
                 <th><input type = "text" name = "email" /></th>
+                <th></th>
             </tr>
     </form>
             <tr>
@@ -76,6 +77,7 @@ def medlemmer():
                 <th>Adresse</th>
                 <th>Telefon</th>
                 <th>Email</th>
+                <th>Se hold</th>
             </tr>
     <form action="remove_medlem" method = "POST">
     """
@@ -84,6 +86,7 @@ def medlemmer():
         page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
         for col in row:
             page += "<td>" + str(col) + "</td>"
+        page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
         page += "</tr>"
 
     page += "</form></table>"
@@ -106,13 +109,14 @@ def medlemmer():
     </form>
             <tr>
                 <th>DELETE</th>
-                <th>Medlems ID</th>
+                <th>Employee ID</th>
                 <th>CPR</th>
                 <th>Navn</th>
                 <th>Alder</th>
                 <th>Adresse</th>
                 <th>Telefon</th>
                 <th>Email</th>
+                <th>Se hold</th>
             </tr>
     <form action="remove_employee" method = "POST">
     """
@@ -121,6 +125,7 @@ def medlemmer():
         page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
         for col in row:
             page += "<td>" + str(col) + "</td>"
+        page += f"""<td><a href="traener/{row[0]}">Se hold</a></td>"""
         page += "</tr>"
 
     page += "</form></table>"
@@ -185,6 +190,103 @@ def remove_employee():
     conn.close()
 
     return redirect(url_for('medlemmer'))
+
+@app.route('/medlem/<mid>')
+def medlem(mid):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+    SELECT t.tid, t.name, t.time, t.price, ms.from_date, ms.to_date
+    FROM Teams t
+    LEFT JOIN Memberships ms ON t.tid = ms.tid
+    LEFT JOIN Members m ON ms.mid = m.mid
+    WHERE m.mid = {mid};
+    """)
+    rows = cur.fetchall()
+    cur.execute(f"SELECT name, mid FROM members WHERE mid = {mid};")
+    name = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+
+    page += f"""
+    <a href="/medlemmer">Tilbage</a>
+    <h1>Medlem: {name[0][0]} ({name[0][1]})</h1>
+    <table>
+        <tr>
+            <th>Hold ID</th>
+            <th>Hold navn</th>
+            <th>Tidspunkt</th>
+            <th>Pris</th>
+            <th>Start dato</th>
+            <th>Slut dato</th>
+        </tr>
+    """
+
+    for row in rows:
+        page += "<tr>"
+        page += f"<td>{row[0]}</td>"
+        page += f"<td>{row[1]}</td>"
+        page += f"<td>{row[2]}</td>"
+        page += f"<td>{row[3]}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y'))}</td>"
+        page += f"<td>{str(datetime.fromtimestamp(int(row[5])).strftime('%d/%m-%Y'))}</td>"
+        page += "</tr>"
+    
+    return page
+
+@app.route('/traener/<eid>')
+def trainer(eid):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+    SELECT t.tid, t.name, t.time
+    FROM Teams t
+    LEFT JOIN Manage m ON t.tid = m.tid
+    LEFT JOIN Employees e ON m.eid = e.eid
+    WHERE e.eid = {eid};
+    """)
+    rows = cur.fetchall()
+    cur.execute(f"SELECT name, eid FROM Employees WHERE eid = {eid};")
+    name = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+
+    page += f"""
+    <a href="/medlemmer">Tilbage</a>
+    <h1>Træner: {name[0][0]} ({name[0][1]})</h1>
+    <table>
+        <tr>
+            <th>Hold ID</th>
+            <th>Hold navn</th>
+            <th>Tidspunkt</th>
+        </tr>
+    """
+
+    for row in rows:
+        page += "<tr>"
+        page += f"<td>{row[0]}</td>"
+        page += f"<td>{row[1]}</td>"
+        page += f"<td>{row[2]}</td>"
+        page += "</tr>"
+    
+    return page
+
 
 """
 Hold
@@ -319,19 +421,14 @@ def team_details():
     <form action="delete_team" method = "POST">
     <input type = "hidden" name = "tid" value = "{team_id}" />
     <input type = "submit" value = "Slet hold" />
+    </form>"""
+
+    page += f"""
+    <form action="add_team_member" method = "POST">
+    <input type = "submit" value = "Tilføj medlem" />
     </form>
 
-
-    <table>
-        <tr>
-            <form action="add_team_member" method = "POST">
-            <th><input type = "submit" value = "Tilføj" /></th>
-            <th><input type = "text" name = "mid" /></th>
-            <th><input type = "text" name = "from_date" /></th>
-            <th><input type = "text" name = "to_date" /></th>
-            <input type = "hidden" name = "tid" value = "{team_id}" />
-            </form>
-        </tr>
+     <table>
         <tr>
             <th>Fjern</th>
             <th>Medlems ID</th>
@@ -344,7 +441,7 @@ def team_details():
             <th>Telefon</th>
             <th>Email</th>
         </tr>
-        <form action="remove_team_member" method = "POST">    
+        <form action="remove_team_member" method = "POST">
     """
 
     for row in rows:
@@ -424,19 +521,38 @@ def add_team_member():
     conn = connect_db()
     cur = conn.cursor()
 
+    if request.method == 'GET':
+        mname = request.args.get('name', '')
+    else:
+        mname = ''
     #! Datoer skal være i format dd/mm-yyyy
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+    #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
+    #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+
+    page = ""
+    page += """
+    <h1>Tilføj medlem til hold</h1>
+    <table>
+        <tr>
+            <form action = "add_team_member" method = GET >
+            <
+            <input type = "submit" value = "SØG" />
+            <input type = "text" name = "name" />
+            </form>
+        </tr>
+    """
 
     cur.execute(f"""
-                INSERT INTO Memberships (mid, tid, from_date, to_date) 
-                VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});
+                SELECT mid, name, age, m.ssn, m.address, m.telephone, m.email FROM members m
+                WHERE m.name = {mname} ;
                 """)
-    conn.commit()
-    cur.close()
-    conn.close()
 
-    return redirect(url_for('hold'))
+    cur.close()
+    conn.close() 
+    
+    return page 
+
+
 
 @app.route('/remove_team_member', methods=['POST'])
 def remove_team_member():
@@ -495,22 +611,22 @@ Features:
 
 @app.route('/faciliteter')
 def faciliteter():
-
-    #SELECT f.name AS facility_name, b.from_date, b.to_date
-    #FROM Bookings b
-    #JOIN Teams t ON b.tid = t.tid
-    #JOIN Facilities f ON b.address = f.address;
-
-    #INSERT INTO Bookings (tid, address, from_date, to_date)
-    #VALUES (1, 'Hovedvejen 1', 1, 5);
-
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute("""
+
+    if request.method == 'GET':
+        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y').strftime("%s")
+        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y').strftime("%s")
+    else:
+        booking_from_date = '-Infinity'
+        booking_to_date = 'Infinity'
+
+    cur.execute(f"""
         SELECT f.name, t.name, b.from_date, b.to_date \
         FROM Bookings b \
         JOIN Teams t ON b.tid = t.tid \
-        JOIN Facilities f ON b.address = f.address; \
+        JOIN Facilities f ON b.address = f.address \
+        WHERE b.from_date >= {booking_from_date} AND b.to_date <= {booking_to_date}; \
     """)
     bookings = cur.fetchall()
     cur.execute("SELECT * FROM Facilities;")
@@ -562,6 +678,11 @@ def faciliteter():
 
     page += """
     <h2>Bookings</h2>
+    <form action="faciliteter" method = "GET">
+    filter from: <input type = "text" name = "from_date" />
+    filter to: <input type = "text" name = "to_date" />
+    <input type = "submit" value = "Filtrer"/>
+    </form>
     <table>
         <tr>
             <th>Facilitet</th>
@@ -596,3 +717,4 @@ def add_facility():
     conn.close()
 
     return redirect(url_for('faciliteter'))
+
