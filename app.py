@@ -109,13 +109,14 @@ def medlemmer():
     </form>
             <tr>
                 <th>DELETE</th>
-                <th>Medlems ID</th>
+                <th>Employee ID</th>
                 <th>CPR</th>
                 <th>Navn</th>
                 <th>Alder</th>
                 <th>Adresse</th>
                 <th>Telefon</th>
                 <th>Email</th>
+                <th>Se hold</th>
             </tr>
     <form action="remove_employee" method = "POST">
     """
@@ -124,7 +125,7 @@ def medlemmer():
         page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
         for col in row:
             page += "<td>" + str(col) + "</td>"
-        page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
+        page += f"""<td><a href="traener/{row[0]}">Se hold</a></td>"""
         page += "</tr>"
 
     page += "</form></table>"
@@ -240,7 +241,52 @@ def medlem(mid):
         page += "</tr>"
     
     return page
-       
+
+@app.route('/traener/<eid>')
+def trainer(eid):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"""
+    SELECT t.tid, t.name, t.time
+    FROM Teams t
+    LEFT JOIN Manage m ON t.tid = m.tid
+    LEFT JOIN Employees e ON m.eid = e.eid
+    WHERE e.eid = {eid};
+    """)
+    rows = cur.fetchall()
+    cur.execute(f"SELECT name, eid FROM Employees WHERE eid = {eid};")
+    name = cur.fetchall()
+
+    page = ""
+    page += """
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        }
+    </style>
+    """
+
+    page += f"""
+    <a href="/medlemmer">Tilbage</a>
+    <h1>Træner: {name[0][0]} ({name[0][1]})</h1>
+    <table>
+        <tr>
+            <th>Hold ID</th>
+            <th>Hold navn</th>
+            <th>Tidspunkt</th>
+        </tr>
+    """
+
+    for row in rows:
+        page += "<tr>"
+        page += f"<td>{row[0]}</td>"
+        page += f"<td>{row[1]}</td>"
+        page += f"<td>{row[2]}</td>"
+        page += "</tr>"
+    
+    return page
+
 
 """
 Hold
