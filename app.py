@@ -516,8 +516,6 @@ def delete_team():
 
 @app.route('/add_team_member', methods=['GET','POST'])
 def add_team_member():
-    form_data = request.form
-
     conn = connect_db()
     cur = conn.cursor()
 
@@ -570,14 +568,14 @@ def add_team_member():
     
     return page 
 
-@app.route('/add_member', methods=['POST'])
-def add_member():
+@app.route('/add_member_to_team', methods=['POST'])
+def add_member_to_team():
     form_data = request.form
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO  FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
-    conn.commit()
+    #cur.execute(f"INSERT INTO Memberships ;")
+    #conn.commit()
     cur.close()
     conn.close()
 
@@ -610,25 +608,6 @@ def remove_team_member():
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return redirect(url_for('hold'))
-
-@app.route('/add_team_employee', methods=['POST'])
-def add_team_employee():
-    form_data = request.form
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-
-    cur.execute(f"""
-                INSERT INTO Manage (eid, tid)
-                VALUES ({form_data['eid']}, {form_data['tid']});
-                """)
-
     conn.commit()
     cur.close()
     conn.close()
