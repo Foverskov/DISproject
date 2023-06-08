@@ -514,21 +514,22 @@ def delete_team():
 
     return redirect(url_for('hold'))
 
-@app.route('/add_team_member', methods=['POST'])
+@app.route('/add_team_member', methods=['GET','POST'])
 def add_team_member():
-    form_data = request.form
-
     conn = connect_db()
     cur = conn.cursor()
 
     if request.method == 'GET':
         mname = request.args.get('name', '')
         cur.execute(f"""
-                SELECT mid, name, age, m.ssn, m.address, m.telephone, m.email FROM members m
-                WHERE m.name = {mname} ;
+                SELECT mid, name, age, ssn, address, telephone, email FROM members 
+                WHERE name LIKE '{mname}%' ;
                 """)
+        rows = cur.fetchall()
     else:
         mname = ''
+        cur.execute(f""" SELECT mid, name, age, ssn, address, telephone, email FROM members; """)
+        rows = cur.fetchall()
     
     
     #! Datoer skal være i format dd/mm-yyyy
@@ -546,23 +547,35 @@ def add_team_member():
             <input type = "text" name = "name" />
             </form>
         </tr>
+    </table>
+
+    <table>
     """
+    for row in rows:
+        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "Tilføj" /></td>"""
+        page += "<td>" + str(row[0]) + "</td>"
+        page += "<td>" + str(row[1]) + "</td>"
+        page += "<td>" + str(row[2]) + "</td>"
+        page += "<td>" + str(row[3]) + "</td>"
+        page += "<td>" + str(row[4]) + "</td>"
+        page += "<td>" + str(row[5]) + "</td>"
+        page += "<td>" + str(row[6]) + "</td>"
+        page += "</tr>"
+    page += "</table>"
 
     cur.close()
     conn.close() 
     
     return page 
 
-
-
-@app.route('/remove_team_member', methods=['POST'])
-def remove_team_member():
+@app.route('/add_member_to_team', methods=['POST'])
+def add_member_to_team():
     form_data = request.form
 
     conn = connect_db()
     cur = conn.cursor()
-    cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
-    conn.commit()
+    #cur.execute(f"INSERT INTO Memberships ;")
+    #conn.commit()
     cur.close()
     conn.close()
 
@@ -580,6 +593,21 @@ def add_team_employee():
                 INSERT INTO Manage (eid, tid)
                 VALUES ({form_data['eid']}, {form_data['tid']});
                 """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+
+@app.route('/remove_team_member', methods=['POST'])
+def remove_team_member():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
     conn.commit()
     cur.close()
     conn.close()
@@ -615,12 +643,12 @@ def faciliteter():
     conn = connect_db()
     cur = conn.cursor()
 
-    if request.method == 'GET':
-        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y').strftime("%s")
-        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y').strftime("%s")
+    if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
+        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
+        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
     else:
-        booking_from_date = '-Infinity'
-        booking_to_date = 'Infinity'
+        booking_from_date = -9223372036854775807 # Min int
+        booking_to_date = 9223372036854775807 # Max int
 
     cur.execute(f"""
         SELECT f.name, t.name, b.from_date, b.to_date \
@@ -695,8 +723,8 @@ def faciliteter():
     for row in bookings:
             page += "<td>" + str(row[0]) + "</td>"
             page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[2]))) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[3]))) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+            page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
             page += "</tr>"
 
     page += "</table>"

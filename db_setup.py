@@ -73,8 +73,8 @@ cur.execute(
     CREATE TABLE Bookings \
     (tid SERIAL, \
     address TEXT, \
-    from_date INT, \
-    to_date INT, \
+    from_date BIGINT, \
+    to_date BIGINT, \
     PRIMARY KEY (tid, address, from_date, to_date), \
     FOREIGN KEY (tid) REFERENCES Teams(tid), \
     FOREIGN KEY (address) REFERENCES Facilities(address) \
