@@ -509,6 +509,7 @@ def delete_team():
     cur = conn.cursor()
     # TODO: Dette kan nok gøres smartere
     cur.execute(f"DELETE FROM Memberships WHERE tid = {team_id};")
+    cur.execute(f"DELETE FROM Manage WHERE tid = {team_id};")
     cur.execute(f"DELETE FROM Teams WHERE tid = {team_id};")
     conn.commit()
     cur.close()
@@ -537,25 +538,39 @@ def add_team_member():
 
     page = ""
 
+    page += """
+    <style>
+     table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+    </style>
+    """
+
     page += f"""
     <h1>Tilføj medlem til hold: {team_id}</h1>
-    <h1>Tilføj medlem til hold</h1>
-    <table>
-        <tr>
-            <form action = "add_team_member" method = "POST" >
-            <input type = "hidden" name = "tid" value = "{team_id}" />
-            <input type = "submit" value = "SØG" />
-            <input type = "text" name = "name" />
-            
-            </form>
-        </tr>
-    </table>
+    
+    <form action = "add_team_member" method = "POST" >
+        <input type = "hidden" name = "tid" value = "{team_id}" />
+        <input type = "submit" value = "SØG" />
+        <input type = "text" name = "name" />
+    </form>
 
-    <table>
-        <form action="add_member_to_team" method = "POST">
-        <input type = "text" name = "from_date" />
-        <input type = "text" name = "to_date" />
+    <form action="add_member_to_team" method = "POST">
+        From date <input type = "text" name = "from_date" />
+        To date <input type = "text" name = "to_date" />
 
+        <table>
+            <tr>
+                <th>Tilføj</th>
+                <th>Medlems ID</th>
+                <th>Navn</th>
+                <th>Alder</th>
+                <th>CPR</th>
+                <th>Adresse</th>
+                <th>Telefon</th>
+                <th>Email</th>
+            </tr>
     """
     for row in rows:
         page += f"""<tr><td>
@@ -572,11 +587,7 @@ def add_team_member():
         page += "<td>" + str(row[5]) + "</td>"
         page += "<td>" + str(row[6]) + "</td>"
         page += "</tr>"
-
-    page += """
-            </form>
-    </table>
-    """
+    page += "</form></table>"
 
     cur.close()
     conn.close() 
