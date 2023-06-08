@@ -396,6 +396,12 @@ def team_details():
                 WHERE t.tid = {team_id}; 
                 """)
     team_name = cur.fetchall()[0][0]
+    cur.execute(f"""
+                SELECT e.eid, e.name, e.age, e.telephone, e.email 
+                FROM Employees e LEFT JOIN Manage m ON e.eid = m.eid 
+                WHERE m.tid = {team_id};
+                """)
+    team_employee = cur.fetchall()
 
 
 
@@ -415,19 +421,14 @@ def team_details():
     <form action="delete_team" method = "POST">
     <input type = "hidden" name = "tid" value = "{team_id}" />
     <input type = "submit" value = "Slet hold" />
+    </form>"""
+
+    page += f"""
+    <form action="add_team_member" method = "POST">
+    <input type = "submit" value = "Tilføj medlem" />
     </form>
 
-
-    <table>
-        <tr>
-            <form action="add_team_member" method = "POST">
-            <th><input type = "submit" value = "Tilføj" /></th>
-            <th><input type = "text" name = "mid" /></th>
-            <th><input type = "text" name = "from_date" /></th>
-            <th><input type = "text" name = "to_date" /></th>
-            <input type = "hidden" name = "tid" value = "{team_id}" />
-            </form>
-        </tr>
+     <table>
         <tr>
             <th>Fjern</th>
             <th>Medlems ID</th>
@@ -440,7 +441,7 @@ def team_details():
             <th>Telefon</th>
             <th>Email</th>
         </tr>
-        <form action="remove_team_member" method = "POST">    
+        <form action="remove_team_member" method = "POST">
     """
 
     for row in rows:
@@ -456,6 +457,41 @@ def team_details():
             page += "<td>" + str(row[8]) + "</td>"
             page += "</tr>"
     page += "</form></table>"
+
+
+    # Holdets trænere
+    page += f"""
+    <h1>Trænere for {team_name}</h1>
+
+    <table>
+        <tr>
+            <form action="add_team_employee" method = "POST">
+            <th><input type = "submit" value = "Tilføj" /></th>
+            <th><input type = "text" name = "eid" /></th>
+            <input type = "hidden" name = "tid" value = "{team_id}" />
+            </form>
+        </tr>
+        <tr>
+            <th>Fjern</th>
+            <th>Træner ID</th>
+            <th>Navn</th>
+            <th>Alder</th>
+            <th>Telefon</th>
+            <th>Email</th>
+        </tr>
+        <form action="remove_team_employee" method = "POST">    
+    """
+
+    for row in team_employee:
+            page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+            page += "<td>" + str(row[0]) + "</td>"
+            page += "<td>" + str(row[1]) + "</td>"
+            page += "<td>" + str(row[2]) + "</td>"
+            page += "<td>" + str(row[3]) + "</td>"
+            page += "<td>" + str(row[4]) + "</td>"
+            page += "</tr>"
+    page += "</form></table>"
+
 
     cur.close()
     conn.close()
@@ -478,26 +514,94 @@ def delete_team():
 
     return redirect(url_for('hold'))
 
-@app.route('/add_team_member', methods=['POST'])
+@app.route('/add_team_member', methods=['GET','POST'])
 def add_team_member():
     form_data = request.form
 
     conn = connect_db()
     cur = conn.cursor()
 
-    #! Datoer skal være i format dd/mm-yyyy
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
-
-    cur.execute(f"""
-                INSERT INTO Memberships (mid, tid, from_date, to_date) 
-                VALUES ({form_data['mid']}, {form_data['tid']}, {from_date}, {to_date});
+    if request.method == 'GET':
+        mname = request.args.get('name', '')
+        cur.execute(f"""
+                SELECT mid, name, age, ssn, address, telephone, email FROM members 
+                WHERE name LIKE '{mname}%' ;
                 """)
+        rows = cur.fetchall()
+    else:
+        mname = ''
+        cur.execute(f""" SELECT mid, name, age, ssn, address, telephone, email FROM members; """)
+        rows = cur.fetchall()
+    
+    
+    #! Datoer skal være i format dd/mm-yyyy
+    #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
+    #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+
+    page = ""
+    page += """
+    <h1>Tilføj medlem til hold</h1>
+    <table>
+        <tr>
+            <form action = "add_team_member" method = GET >
+            <
+            <input type = "submit" value = "SØG" />
+            <input type = "text" name = "name" />
+            </form>
+        </tr>
+    </table>
+
+    <table>
+    """
+    for row in rows:
+        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "Tilføj" /></td>"""
+        page += "<td>" + str(row[0]) + "</td>"
+        page += "<td>" + str(row[1]) + "</td>"
+        page += "<td>" + str(row[2]) + "</td>"
+        page += "<td>" + str(row[3]) + "</td>"
+        page += "<td>" + str(row[4]) + "</td>"
+        page += "<td>" + str(row[5]) + "</td>"
+        page += "<td>" + str(row[6]) + "</td>"
+        page += "</tr>"
+    page += "</table>"
+
+    cur.close()
+    conn.close() 
+    
+    return page 
+
+@app.route('/add_member', methods=['POST'])
+def add_member():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO  FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
     conn.commit()
     cur.close()
     conn.close()
 
     return redirect(url_for('hold'))
+
+@app.route('/add_team_employee', methods=['POST'])
+def add_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+
+    cur.execute(f"""
+                INSERT INTO Manage (eid, tid)
+                VALUES ({form_data['eid']}, {form_data['tid']});
+                """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
 
 @app.route('/remove_team_member', methods=['POST'])
 def remove_team_member():
@@ -506,6 +610,38 @@ def remove_team_member():
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(f"DELETE FROM Memberships WHERE mid = {list(form_data.keys())[0]};")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+@app.route('/add_team_employee', methods=['POST'])
+def add_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+
+
+    cur.execute(f"""
+                INSERT INTO Manage (eid, tid)
+                VALUES ({form_data['eid']}, {form_data['tid']});
+                """)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('hold'))
+
+@app.route('/remove_team_employee', methods=['POST'])
+def remove_team_employee():
+    form_data = request.form
+
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM Manage WHERE eid = {list(form_data.keys())[0]};")
     conn.commit()
     cur.close()
     conn.close()
