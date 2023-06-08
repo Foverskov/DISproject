@@ -62,8 +62,8 @@ cur.execute(
     price INT \
     ); \
     CREATE TABLE Memberships \
-    (mid SERIAL, \
-    tid SERIAL, \
+    (mid, \
+    tid, \
     from_date BIGINT, \
     to_date BIGINT, \
     PRIMARY KEY (mid, tid), \
@@ -80,8 +80,8 @@ cur.execute(
     FOREIGN KEY (address) REFERENCES Facilities(address) \
     ); \
     CREATE TABLE Manage \
-    (tid SERIAL, \
-    eid SERIAL, \
+    (tid , \
+    eid , \
     PRIMARY KEY (tid, eid), \
     FOREIGN KEY (tid) REFERENCES Teams(tid), \
     FOREIGN KEY (eid) REFERENCES Employees(eid) \
