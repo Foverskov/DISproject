@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+
+    {% block title %} Medlem {% endblock %}
+    
+    {% block content %}
+    <head>
+        <title>Medlem</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/medlemmer">Tilbage</a>
+        <h1>Medlem: {{ name[0][0] }} ({{ name[0][1] }})</h1>
+    
+        <table>
+            <tr>
+                <th>Hold ID</th>
+                <th>Hold navn</th>
+                <th>Tidspunkt</th>
+                <th>Pris</th>
+                <th>Start dato</th>
+                <th>Slut dato</th>
+            </tr>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4]|timestamp_to_date }}</td>
+                    <td>{{ row[5]|timestamp_to_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    
+    </body>
+    {% endblock %}
+
+</html>
