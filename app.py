@@ -43,101 +43,6 @@ def medlemmer():
 
     return render_template('medlemmer.html', members=members, employees=employees)
 
-    # page = ""
-    # page += """
-    # <style>
-    #  table, th, td {
-    # border: 1px solid black;
-    # border-collapse: collapse;
-    # }
-    # </style>
-    # """
-    
-    # # Oversigt medlemmer
-    # page += """
-    # <a href="/">Tilbage</a>
-    # <h1>Medlemmer</h1>
-    # <form action="add_medlem" method = "POST">
-    #     <table>
-    #         <tr>
-    #             <th><input type = "submit" value = "Tilføj" /></th>
-    #             <th></th>
-    #             <th> <input type = "text" name = "cpr" /></th>
-    #             <th><input type = "text" name = "name" /> </th>
-    #             <th><input type = "text" name = "age" /> </th>
-    #             <th><input type = "text" name = "addr" /></th>
-    #             <th><input type = "text" name = "tel" /></th>
-    #             <th><input type = "text" name = "email" /></th>
-    #             <th></th>
-    #         </tr>
-    # </form>
-    #         <tr>
-    #             <th>DELETE</th>
-    #             <th>Medlems ID</th>
-    #             <th>CPR</th>
-    #             <th>Navn</th>
-    #             <th>Alder</th>
-    #             <th>Adresse</th>
-    #             <th>Telefon</th>
-    #             <th>Email</th>
-    #             <th>Se hold</th>
-    #         </tr>
-    # <form action="remove_medlem" method = "POST">
-    # """
-
-    # for row in members:
-    #     page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-    #     for col in row:
-    #         page += "<td>" + str(col) + "</td>"
-    #     page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
-    #     page += "</tr>"
-
-    # page += "</form></table>"
-
-    # # Oversigt Employees
-    # page += """
-    # <h1>Trænere</h1>
-    # <form action="add_employee" method = "POST">
-    #     <table>
-    #         <tr>
-    #             <th><input type = "submit" value = "Tilføj" /></th>
-    #             <th></th>
-    #             <th> <input type = "text" name = "cpr" /></th>
-    #             <th><input type = "text" name = "name" /> </th>
-    #             <th><input type = "text" name = "age" /> </th>
-    #             <th><input type = "text" name = "addr" /></th>
-    #             <th><input type = "text" name = "tel" /></th>
-    #             <th><input type = "text" name = "email" /></th>
-    #         </tr>
-    # </form>
-    #         <tr>
-    #             <th>DELETE</th>
-    #             <th>Employee ID</th>
-    #             <th>CPR</th>
-    #             <th>Navn</th>
-    #             <th>Alder</th>
-    #             <th>Adresse</th>
-    #             <th>Telefon</th>
-    #             <th>Email</th>
-    #             <th>Se hold</th>
-    #         </tr>
-    # <form action="remove_employee" method = "POST">
-    # """
-
-    # for row in employees:
-    #     page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-    #     for col in row:
-    #         page += "<td>" + str(col) + "</td>"
-    #     page += f"""<td><a href="traener/{row[0]}">Se hold</a></td>"""
-    #     page += "</tr>"
-
-    # page += "</form></table>"
-
-    # cur.close()
-    # conn.close()
-
-    # return page
-
 @app.route('/add_medlem', methods=['POST'])
 def add_medlem():
     form_data = request.form
@@ -319,55 +224,55 @@ def hold():
     """)
     rows = cur.fetchall()
 
-    page = ""
-    page += """
-    <style>
-     table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-    </style>
-    """
+    # page = ""
+    # page += """
+    # <style>
+    #  table, th, td {
+    # border: 1px solid black;
+    # border-collapse: collapse;
+    # }
+    # </style>
+    # """
 
-    page += """
-    <a href="/">Tilbage</a>
-    <h1>Hold</h1>
-        <table>
-            <form action="add_team" method = "POST">
-            <tr>
-                <th></th>
-                <th><input type = "text" name = "name" /></th>
-                <th><input type = "text" name = "time" /></th>
-                <th><input type = "text" name = "price" /></th>
-                <th></th>
-                <th><input type = "submit" value = "Tilføj" /></th>
-            </tr>
-            </form>
+    # page += """
+    # <a href="/">Tilbage</a>
+    # <h1>Hold</h1>
+    #     <table>
+    #         <form action="add_team" method = "POST">
+    #         <tr>
+    #             <th></th>
+    #             <th><input type = "text" name = "name" /></th>
+    #             <th><input type = "text" name = "time" /></th>
+    #             <th><input type = "text" name = "price" /></th>
+    #             <th></th>
+    #             <th><input type = "submit" value = "Tilføj" /></th>
+    #         </tr>
+    #         </form>
 
-            <tr>
-                <th>Hold ID</th>
-                <th>Holdnavn</th>
-                <th>Tid</th>
-                <th>Pris</th>
-                <th>Medlemmer</th>
-                <th>Detaljer</th>
-            </tr>
-    <form action="team_details" method = "POST">
-    """
+    #         <tr>
+    #             <th>Hold ID</th>
+    #             <th>Holdnavn</th>
+    #             <th>Tid</th>
+    #             <th>Pris</th>
+    #             <th>Medlemmer</th>
+    #             <th>Detaljer</th>
+    #         </tr>
+    # <form action="team_details" method = "POST">
+    # """
 
-    for row in rows:
-        page += "<tr>"
-        for col in row:
-            page += "<td>" + str(col) + "</td>"
-        page += f"""<td><input type = "submit" name = "{row[0]}" value = "Detaljer"/></td>"""
-        page += "</tr>"
+    # for row in rows:
+    #     page += "<tr>"
+    #     for col in row:
+    #         page += "<td>" + str(col) + "</td>"
+    #     page += f"""<td><input type = "submit" name = "{row[0]}" value = "Detaljer"/></td>"""
+    #     page += "</tr>"
 
-    page += "</form></table>"
+    # page += "</form></table>"
 
     cur.close()
     conn.close()
 
-    return page
+    return render_template('hold.html', rows=rows)
 
 @app.route('/add_team', methods=['POST'])
 def add_team():
@@ -622,8 +527,6 @@ def add_member_to_team():
         error_message = "Invalid member ID or team ID."
         return render_template('error.html', error=error_message)
 
-
-
 @app.route('/add_team_employee', methods=['POST'])
 def add_team_employee():
     form_data = request.form
@@ -642,7 +545,6 @@ def add_team_employee():
     conn.close()
 
     return redirect(url_for('hold'))
-
 
 @app.route('/remove_team_member', methods=['POST'])
 def remove_team_member():
@@ -705,86 +607,86 @@ def faciliteter():
     cur.execute("SELECT * FROM Facilities;")
     facilities = cur.fetchall()
 
-    page = ""
-    page += """
-    <style>
-     table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-    </style>
-    """
-    page += """
-    <a href="/">Tilbage</a>
-    <h1>Faciliteter</h1>
-    """
+    # page = ""
+    # page += """
+    # <style>
+    #  table, th, td {
+    # border: 1px solid black;
+    # border-collapse: collapse;
+    # }
+    # </style>
+    # """
+    # page += """
+    # <a href="/">Tilbage</a>
+    # <h1>Faciliteter</h1>
+    # """
 
-    # Facilitet oversigt
-    page += """
-    <h2>Faciliteter</h2>
-    <table>
-        <form action="add_facility" method = "POST">
-        <tr>
-            <th><input type = "text" name = "addr" /></th>
-            <th><input type = "text" name = "name" /></th>
-            <th><input type = "text" name = "description" /></th>
-            <th><input type = "submit" value = "Tilføj"/></th>
-        </tr>
-        </form>
-        <tr>
-            <th>Adresse</th>
-            <th>Navn</th>
-            <th>Beskrivelse</th>
-            <th>Bookings</th>
-        <tr>
-        <form action="facility_details" method = "POST">
-    """
-    for row in facilities:
-            page += "<td>" + str(row[0]) + "</td>"
-            page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(row[2]) + "</td>"
-            page += "<td><input type = 'submit' value = 'Book' name = '" + str(row[0]) + "'/></td>"
-            page += "</tr>"
-    page += "</form></table>"
+    # # Facilitet oversigt
+    # page += """
+    # <h2>Faciliteter</h2>
+    # <table>
+    #     <form action="add_facility" method = "POST">
+    #     <tr>
+    #         <th><input type = "text" name = "addr" /></th>
+    #         <th><input type = "text" name = "name" /></th>
+    #         <th><input type = "text" name = "description" /></th>
+    #         <th><input type = "submit" value = "Tilføj"/></th>
+    #     </tr>
+    #     </form>
+    #     <tr>
+    #         <th>Adresse</th>
+    #         <th>Navn</th>
+    #         <th>Beskrivelse</th>
+    #         <th>Bookings</th>
+    #     <tr>
+    #     <form action="facility_details" method = "POST">
+    # """
+    # for row in facilities:
+    #         page += "<td>" + str(row[0]) + "</td>"
+    #         page += "<td>" + str(row[1]) + "</td>"
+    #         page += "<td>" + str(row[2]) + "</td>"
+    #         page += "<td><input type = 'submit' value = 'Book' name = '" + str(row[0]) + "'/></td>"
+    #         page += "</tr>"
+    # page += "</form></table>"
 
-    # Bookings oversigt
+    # # Bookings oversigt
 
-    page += """
-    <h2>Bookings</h2>
-    <form action="faciliteter" method = "GET">
-    filter from: <input type = "text" name = "from_date" />
-    filter to: <input type = "text" name = "to_date" />
-    <input type = "submit" value = "Filtrer"/>
-    </form>
-    """
+    # page += """
+    # <h2>Bookings</h2>
+    # <form action="faciliteter" method = "GET">
+    # filter from: <input type = "text" name = "from_date" />
+    # filter to: <input type = "text" name = "to_date" />
+    # <input type = "submit" value = "Filtrer"/>
+    # </form>
+    # """
 
-    if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
-        page += "<p>Filtrer fra: " + request.args.get('from_date', '') + " Til: " + request.args.get('to_date', '') + "</p>"
+    # if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
+    #     page += "<p>Filtrer fra: " + request.args.get('from_date', '') + " Til: " + request.args.get('to_date', '') + "</p>"
 
-    page += """
-    <table>
-        <tr>
-            <th>Adresse</th>
-            <th>Facilitet</th>
-            <th>Hold</th>
-            <th>Start</th>
-            <th>Slut</th>
-        <tr>
-    """
-    for row in bookings:
-            page += "<td>" + str(row[0]) + "</td>"
-            page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(row[2]) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M')) + "</td>"
-            page += "</tr>"
+    # page += """
+    # <table>
+    #     <tr>
+    #         <th>Adresse</th>
+    #         <th>Facilitet</th>
+    #         <th>Hold</th>
+    #         <th>Start</th>
+    #         <th>Slut</th>
+    #     <tr>
+    # """
+    # for row in bookings:
+    #         page += "<td>" + str(row[0]) + "</td>"
+    #         page += "<td>" + str(row[1]) + "</td>"
+    #         page += "<td>" + str(row[2]) + "</td>"
+    #         page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+    #         page += "<td>" + str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M')) + "</td>"
+    #         page += "</tr>"
 
-    page += "</table>"
+    # page += "</table>"
 
     cur.close()
     conn.close()
 
-    return page
+    return render_template('Faciliteter.html', bookings =bookings,facilities = facilities, booking_from_date = booking_from_date,booking_to_date=booking_to_date)
 
 @app.route('/add_facility', methods=['POST'])
 def add_facility():
