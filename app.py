@@ -19,6 +19,9 @@ def connect_db():
                             password=db['password'], host=db['host'], port=db['port'])
     return conn
 
+@app.errorhandler(ValueError)
+def handle_value_error(e):
+    return render_template('error.html'), 500
 
 @app.route('/')
 def index():
@@ -50,12 +53,15 @@ def add_medlem():
 
     conn = connect_db()
     cur = conn.cursor()
+
+    
     cur.execute(f"INSERT INTO members VALUES (DEFAULT, '{form_data['cpr']}', '{form_data['name']}', {int(form_data['age'])}, '{form_data['addr']}', '{form_data['tel']}', '{form_data['email']}');")
     conn.commit()
     cur.close()
     conn.close()
+    
+    return redirect(url_for('medlemmer')) 
 
-    return redirect(url_for('medlemmer'))
 
 @app.route('/remove_medlem', methods=['POST'])
 def remove_medlem():
