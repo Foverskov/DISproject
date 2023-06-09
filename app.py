@@ -219,42 +219,6 @@ def medlem(mid):
 
     return render_template('medlem.html', rows=rows, name=name)
 
-    # page = ""
-    # page += """
-    # <style>
-    #     table, th, td {
-    #     border: 1px solid black;
-    #     border-collapse: collapse;
-    #     }
-    # </style>
-    # """
-
-    # page += f"""
-    # <a href="/medlemmer">Tilbage</a>
-    # <h1>Medlem: {name[0][0]} ({name[0][1]})</h1>
-    # <table>
-    #     <tr>
-    #         <th>Hold ID</th>
-    #         <th>Hold navn</th>
-    #         <th>Tidspunkt</th>
-    #         <th>Pris</th>
-    #         <th>Start dato</th>
-    #         <th>Slut dato</th>
-    #     </tr>
-    # """
-
-    # for row in rows:
-    #     page += "<tr>"
-    #     page += f"<td>{row[0]}</td>"
-    #     page += f"<td>{row[1]}</td>"
-    #     page += f"<td>{row[2]}</td>"
-    #     page += f"<td>{row[3]}</td>"
-    #     page += f"<td>{str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y'))}</td>"
-    #     page += f"<td>{str(datetime.fromtimestamp(int(row[5])).strftime('%d/%m-%Y'))}</td>"
-    #     page += "</tr>"
-    
-    # return page
-
 @app.route('/traener/<eid>')
 def trainer(eid):
     conn = connect_db()
@@ -274,37 +238,6 @@ def trainer(eid):
     conn.close()
 
     return render_template('traener.html', rows=rows, name=name)
-
-    # page = ""
-    # page += """
-    # <style>
-    #     table, th, td {
-    #     border: 1px solid black;
-    #     border-collapse: collapse;
-    #     }
-    # </style>
-    # """
-
-    # page += f"""
-    # <a href="/medlemmer">Tilbage</a>
-    # <h1>Træner: {name[0][0]} ({name[0][1]})</h1>
-    # <table>
-    #     <tr>
-    #         <th>Hold ID</th>
-    #         <th>Hold navn</th>
-    #         <th>Tidspunkt</th>
-    #     </tr>
-    # """
-
-    # for row in rows:
-    #     page += "<tr>"
-    #     page += f"<td>{row[0]}</td>"
-    #     page += f"<td>{row[1]}</td>"
-    #     page += f"<td>{row[2]}</td>"
-    #     page += "</tr>"
-    
-    # return page
-
 
 """
 Hold
