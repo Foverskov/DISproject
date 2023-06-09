@@ -392,63 +392,10 @@ def add_team_member():
     #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
     #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
 
-    page = ""
-
-    page += """
-    <style>
-     table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-    </style>
-    """
-
-    page += f"""
-    <h1>Tilføj medlem til hold: {team_id}</h1>
-    
-    <form action = "add_team_member" method = "POST" >
-        <input type = "hidden" name = "tid" value = "{team_id}" />
-        <input type = "submit" value = "SØG" />
-        <input type = "text" name = "name" />
-    </form>
-
-    <form action="add_member_to_team" method = "POST">
-        From date <input type = "text" name = "from_date" />
-        To date <input type = "text" name = "to_date" />
-
-        <table>
-            <tr>
-                <th>Tilføj</th>
-                <th>Medlems ID</th>
-                <th>Navn</th>
-                <th>Alder</th>
-                <th>CPR</th>
-                <th>Adresse</th>
-                <th>Telefon</th>
-                <th>Email</th>
-            </tr>
-    """
-    for row in rows:
-        page += f"""<tr><td>
-        <input type = "hidden" name = "mid" value = "{row[0]}" />
-        <input type = "hidden" name = "tid" value = "{team_id}" />
-        <input type = "submit" name = "Tilføj" value = "Tilføj" />
-        </td>
-        """
-        page += "<td>" + str(row[0]) + "</td>"
-        page += "<td>" + str(row[1]) + "</td>"
-        page += "<td>" + str(row[2]) + "</td>"
-        page += "<td>" + str(row[3]) + "</td>"
-        page += "<td>" + str(row[4]) + "</td>"
-        page += "<td>" + str(row[5]) + "</td>"
-        page += "<td>" + str(row[6]) + "</td>"
-        page += "</tr>"
-    page += "</table></form>"
-
     cur.close()
     conn.close() 
     
-    return page 
+    return render_template('add_team_member.html', rows=rows, team_id = team_id)
 
 @app.route('/add_member_to_team', methods=['POST'])
 def add_member_to_team():
@@ -554,83 +501,7 @@ def faciliteter():
     bookings = cur.fetchall()
     cur.execute("SELECT * FROM Facilities;")
     facilities = cur.fetchall()
-
-    # page = ""
-    # page += """
-    # <style>
-    #  table, th, td {
-    # border: 1px solid black;
-    # border-collapse: collapse;
-    # }
-    # </style>
-    # """
-    # page += """
-    # <a href="/">Tilbage</a>
-    # <h1>Faciliteter</h1>
-    # """
-
-    # # Facilitet oversigt
-    # page += """
-    # <h2>Faciliteter</h2>
-    # <table>
-    #     <form action="add_facility" method = "POST">
-    #     <tr>
-    #         <th><input type = "text" name = "addr" /></th>
-    #         <th><input type = "text" name = "name" /></th>
-    #         <th><input type = "text" name = "description" /></th>
-    #         <th><input type = "submit" value = "Tilføj"/></th>
-    #     </tr>
-    #     </form>
-    #     <tr>
-    #         <th>Adresse</th>
-    #         <th>Navn</th>
-    #         <th>Beskrivelse</th>
-    #         <th>Bookings</th>
-    #     <tr>
-    #     <form action="facility_details" method = "POST">
-    # """
-    # for row in facilities:
-    #         page += "<td>" + str(row[0]) + "</td>"
-    #         page += "<td>" + str(row[1]) + "</td>"
-    #         page += "<td>" + str(row[2]) + "</td>"
-    #         page += "<td><input type = 'submit' value = 'Book' name = '" + str(row[0]) + "'/></td>"
-    #         page += "</tr>"
-    # page += "</form></table>"
-
-    # # Bookings oversigt
-
-    # page += """
-    # <h2>Bookings</h2>
-    # <form action="faciliteter" method = "GET">
-    # filter from: <input type = "text" name = "from_date" />
-    # filter to: <input type = "text" name = "to_date" />
-    # <input type = "submit" value = "Filtrer"/>
-    # </form>
-    # """
-
-    # if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
-    #     page += "<p>Filtrer fra: " + request.args.get('from_date', '') + " Til: " + request.args.get('to_date', '') + "</p>"
-
-    # page += """
-    # <table>
-    #     <tr>
-    #         <th>Adresse</th>
-    #         <th>Facilitet</th>
-    #         <th>Hold</th>
-    #         <th>Start</th>
-    #         <th>Slut</th>
-    #     <tr>
-    # """
-    # for row in bookings:
-    #         page += "<td>" + str(row[0]) + "</td>"
-    #         page += "<td>" + str(row[1]) + "</td>"
-    #         page += "<td>" + str(row[2]) + "</td>"
-    #         page += "<td>" + str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')) + "</td>"
-    #         page += "<td>" + str(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M')) + "</td>"
-    #         page += "</tr>"
-
-    # page += "</table>"
-
+    
     cur.close()
     conn.close()
 
