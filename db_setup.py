@@ -67,8 +67,8 @@ cur.execute(
     from_date BIGINT, \
     to_date BIGINT, \
     PRIMARY KEY (mid, tid), \
-    FOREIGN KEY (mid) REFERENCES Members(mid), \
-    FOREIGN KEY (tid) REFERENCES Teams(tid) \
+    FOREIGN KEY (mid) REFERENCES Members(mid) ON DELETE CASCADE, \
+    FOREIGN KEY (tid) REFERENCES Teams(tid) ON DELETE CASCADE \
     ); \
     CREATE TABLE Bookings \
     (tid SERIAL, \
@@ -76,26 +76,26 @@ cur.execute(
     from_date BIGINT, \
     to_date BIGINT, \
     PRIMARY KEY (tid, address, from_date, to_date), \
-    FOREIGN KEY (tid) REFERENCES Teams(tid), \
-    FOREIGN KEY (address) REFERENCES Facilities(address) \
+    FOREIGN KEY (tid) REFERENCES Teams(tid) ON DELETE CASCADE, \
+    FOREIGN KEY (address) REFERENCES Facilities(address) ON DELETE CASCADE \
     ); \
     CREATE TABLE Manage \
     (tid INT, \
     eid INT, \
     PRIMARY KEY (tid, eid), \
-    FOREIGN KEY (tid) REFERENCES Teams(tid), \
-    FOREIGN KEY (eid) REFERENCES Employees(eid) \
+    FOREIGN KEY (tid) REFERENCES Teams(tid) ON DELETE CASCADE, \
+    FOREIGN KEY (eid) REFERENCES Employees(eid) ON DELETE CASCADE \
     ); \
     CREATE TABLE HourlyEmployees \
     (eid SERIAL PRIMARY KEY, \
     hourly_rate INT, \
     hours_worked INT, \
-    FOREIGN KEY (eid) REFERENCES Employees(eid) \
+    FOREIGN KEY (eid) REFERENCES Employees(eid) ON DELETE CASCADE \
     ); \
     CREATE TABLE SalariedEmployees \
     (eid SERIAL PRIMARY KEY, \
     salary INT, \
-    FOREIGN KEY (eid) REFERENCES Employees(eid) \
+    FOREIGN KEY (eid) REFERENCES Employees(eid) ON DELETE CASCADE \
     );\
     ''')
 
