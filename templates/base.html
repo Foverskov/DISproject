@@ -10,11 +10,28 @@
     <header>
         <nav>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/medlemmer">Medlemmer</a></li>
-            <li><a href="/traenere">Træner oversigt</a></li>
-            <li><a href="/hold">Holdstruktur</a></li>
-            <li><a href="/faciliteter">Faciliteter</a></li>
+            <li>
+              <div class = "dropdown">
+              <a class ="dropbtn"href="/">Home</a>
+              </div>
+            </li>
+            <li>
+              <div class = "dropdown">
+                <button class="dropbtn">Administrer</button>
+                  <div class="dropdown-content">
+                  <a href="/traenere">Trænere</a>
+                  <a href="/medlemmer">Medlemmer</a>
+                </div>
+              </div>
+            </li>
+
+            <li >
+              <a class= "dropbtn" href="/hold">Holdstruktur</a>
+            </li>
+
+            <li >
+              <a class = "dropbtn" href="/faciliteter">Faciliteter</a>
+            </li>
           </ul>
         </nav>
       </header> 
