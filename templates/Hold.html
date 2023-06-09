@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+
+    {% block title %} Hold {% endblock %}
+    
+    {% block content %}
+    <head>
+        <title>Hold</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/">Tilbage</a>
+        <h1>Hold</h1>
+            <table>
+                <form action="add_team" method = "POST">
+                <tr>
+                    <th></th>
+                    <th><input type = "text" name = "name" /></th>
+                    <th><input type = "text" name = "time" /></th>
+                    <th><input type = "text" name = "price" /></th>
+                    <th></th>
+                    <th><input type = "submit" value = "Tilføj" /></th>
+                </tr>
+                </form>
+    
+                <tr>
+                    <th>Hold ID</th>
+                    <th>Holdnavn</th>
+                    <th>Tid</th>
+                    <th>Pris</th>
+                    <th>Medlemmer</th>
+                    <th>Detaljer</th>
+                </tr>
+        <form action="team_details" method = "POST">
+    
+        {%for row in rows:%}
+            <tr>
+            {%for col in row:%}
+                    <td> {{col}} </td>
+            {%endfor%}
+            <td><input type = "submit" name = "{{row[0]}}" value = "Detaljer"/></td>
+            </tr>
+        {%endfor%}
+    
+        </form>
+        </table>
+    
+    </body>
+    {% endblock %}
+
+</html>

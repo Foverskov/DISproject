@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+
+    {% block title %} Faciliteter {% endblock %}
+    
+    {% block content %}
+    <head>
+        <title>Faciliteter</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+    <body>
+        <style>
+         table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            }
+        </style>
+        <a href="/">Tilbage</a>
+        <h1>Faciliteter</h1>
+        <table>
+            <form action="add_facility" method = "POST">
+            <tr>
+                <th><input type = "text" name = "addr" /></th>
+                <th><input type = "text" name = "name" /></th>
+                <th><input type = "text" name = "description" /></th>
+                <th><input type = "submit" value = "Tilføj"/></th>
+            </tr>
+            </form>
+            <tr>
+                <th>Adresse</th>
+                <th>Navn</th>
+                <th>Beskrivelse</th>
+                <th>Bookings</th>
+            <tr>
+            <form action="facility_details" method = "POST">
+
+        {%for row in facilities:%}
+                <td> {{(row[0])}} </td>
+                <td> {{(row[1])}} </td>
+                <td> {{(row[2])}} </td>
+                <td><input type = 'submit' value = 'Book' name = '" + str(row[0]) + "'/></td>
+                </tr>
+        {%endfor%}
+            </form
+        </table>
+
+        <h2>Bookings</h2>
+        <form action="faciliteter" method = "GET">
+        filter from: <input type = "text" name = "from_date" />
+        filter to: <input type = "text" name = "to_date" />
+        <input type = "submit" value = "Filtrer"/>
+        </form>
+
+    
+        {% if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':%}
+            <p> Filtrer fra: {{request.args.get('from_date', '')}} Til:  {{request.args.get('to_date', '')}} </p>
+        {% endif %}
+        
+        <table>
+            <tr>
+                <th>Adresse</th>
+                <th>Facilitet</th>
+                <th>Hold</th>
+                <th>Start</th>
+                <th>Slut</th>
+            </tr>
+        {%for row in bookings: %}
+                <td> {{(row[0])}} </td>
+                <td> {{(row[1])}} </td>
+                <td> {{(row[2])}} </td>
+                <td> {{(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M'))}}</td>
+                <td> {{(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M'))}}</td>
+                </tr>
+        {%endfor %}
+        </table>
+    
+    </body>
+    {% endblock %}
+
+</html>
