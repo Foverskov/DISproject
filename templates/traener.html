@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+
+    {% block title %} Træner {% endblock %}
+    
+    {% block content %}
+    <head>
+        <title>Træner</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/medlemmer">Tilbage</a>
+        <h1>Træner: {{name[0][0]}} ({{name[0][1]}})</h1>
+        <table>
+            <tr>
+                <th>Hold ID</th>
+                <th>Hold navn</th>
+                <th>Tidspunkt</th>
+            </tr>
+            {% for row in rows %}
+                <tr>
+                    <td>{row[0]}</td>
+                    <td>{row[1]}</td>
+                    <td>{row[2]}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    
+    </body>
+    {% endblock %}
+
+</html>
