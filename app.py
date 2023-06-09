@@ -171,52 +171,6 @@ def hold():
     GROUP BY t.tid, t.name;
     """)
     rows = cur.fetchall()
-
-    # page = ""
-    # page += """
-    # <style>
-    #  table, th, td {
-    # border: 1px solid black;
-    # border-collapse: collapse;
-    # }
-    # </style>
-    # """
-
-    # page += """
-    # <a href="/">Tilbage</a>
-    # <h1>Hold</h1>
-    #     <table>
-    #         <form action="add_team" method = "POST">
-    #         <tr>
-    #             <th></th>
-    #             <th><input type = "text" name = "name" /></th>
-    #             <th><input type = "text" name = "time" /></th>
-    #             <th><input type = "text" name = "price" /></th>
-    #             <th></th>
-    #             <th><input type = "submit" value = "Tilføj" /></th>
-    #         </tr>
-    #         </form>
-
-    #         <tr>
-    #             <th>Hold ID</th>
-    #             <th>Holdnavn</th>
-    #             <th>Tid</th>
-    #             <th>Pris</th>
-    #             <th>Medlemmer</th>
-    #             <th>Detaljer</th>
-    #         </tr>
-    # <form action="team_details" method = "POST">
-    # """
-
-    # for row in rows:
-    #     page += "<tr>"
-    #     for col in row:
-    #         page += "<td>" + str(col) + "</td>"
-    #     page += f"""<td><input type = "submit" name = "{row[0]}" value = "Detaljer"/></td>"""
-    #     page += "</tr>"
-
-    # page += "</form></table>"
-
     cur.close()
     conn.close()
 
@@ -445,60 +399,10 @@ def facility_details():
                 """)
     bookings = cur.fetchall()
 
-    # page = ""
-    # page += """
-    # <style>
-    #     table, th, td {
-    #     border: 1px solid black;
-    #     border-collapse: collapse;
-    #     }
-    # </style>
-    # """
-    # page += f"""
-    # <a href="/faciliteter">Tilbage</a>
-    # <h1>Facilitet på {vej}</h1>
-    
-    # <form action="delete_facility" method = "POST">
-    #     <input type = "hidden" name = "address" value = "{vej}" />
-    #     <input type = "submit" value = "Slet"/>
-    # </form>
-
-    # <table>
-    # <form action="add_booking" method = "POST">
-    #     <tr>
-    #         <td></td>
-    #         <td><input type = "text" name = "tid" /></td>
-    #         <input type = "hidden" name = "address" value = "{vej}" />
-    #         <td><input type = "text" name = "from_date" /></td>
-    #         <td><input type = "text" name = "to_date" /></td>
-    #         <td><input type = "submit" value = "Tilføj"/></td>
-    #     </tr>
-    # </form>
-    #     <tr>
-    #         <th>Hold navn</th>
-    #         <th>Hold id</th>
-    #         <th>Start tidspunkt</th>
-    #         <th>Slut tidspunkt</th>
-    #         <th>Slet</th>
-    #     <tr>
-    # <form action="delete_booking" method = "POST">
-    # """
-
-    # for row in bookings:
-    #     page += "<tr>"
-    #     page += f"<td>{row[0]}</td>"
-    #     page += f"<td>{row[1]}</td>"
-    #     page += f"<td>{str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M'))}</td>"
-    #     page += f"<td>{str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M'))}</td>"
-    #     page += f"""<td><input type = "submit" name = "{(vej,row[1],row[2],row[3])}" value = "X"/></td>"""
-    #     page += "</tr>"
-    
-    # page += "</form></table>"
-
     conn.commit()
     cur.close()
     conn.close()
-    return render_template(FD_2.html ,vej=vej, bookings=bookings )
+    return render_template('Facility_details.html' ,vej=vej, bookings=bookings,)
 
 @app.route('/delete_facility', methods=['POST'])
 def delete_facility():
