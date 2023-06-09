@@ -68,7 +68,7 @@ def add_medlem():
     conn.commit()
     cur.close()
     conn.close()
-    
+
     return redirect(url_for('medlemmer')) 
 
 
