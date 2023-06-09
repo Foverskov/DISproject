@@ -16,27 +16,27 @@
     </head>
     <body>
         <a href="/">Tilbage</a>
-        <h1>Medlemmer</h1>
+        <h1>Træner oversigt</h1>
     
-        <form action="add_medlem" method="POST">
+        <form action="add_employee" method="POST">
             <table>
                 <tr>
                     <th><input type="submit" value="Tilføj" /></th>
-                    <th><input type="text" name="cpr" placeholder="CPR"/></th>
-                    <th><input type="text" name="name" placeholder="Navn"/></th>
-                    <th><input type="text" name="age" placeholder="Alder"/></th>
-                    <th><input type="text" name="addr" placeholder="Adresse"/></th>
-                    <th><input type="text" name="tel" placeholder="Telefon"/></th>
-                    <th><input type="text" name="email" placeholder="Email"/></th>
+                    <th><input type="text" name="cpr" placeholder="CPR" /></th>
+                    <th><input type="text" name="name" placeholder="Navn" /></th>
+                    <th><input type="text" name="age" placeholder="Alder" /></th>
+                    <th><input type="text" name="addr" placeholder="Adresse" /></th>
+                    <th><input type="text" name="tel" placeholder="Telefonnummer" /></th>
+                    <th><input type="text" name="email" placeholder="Email" /></th>
                 </tr>
             </table>
         </form>
     
-        <form action="remove_medlem" method="POST">
+        <form action="remove_employee" method="POST">
             <table>
                 <tr>
                     <th>DELETE</th>
-                    <th>Medlems ID</th>
+                    <th>Employee ID</th>
                     <th>CPR</th>
                     <th>Navn</th>
                     <th>Alder</th>
@@ -45,17 +45,18 @@
                     <th>Email</th>
                     <th>Se hold</th>
                 </tr>
-                {% for row in members %}
+                {% for row in employees %}
                     <tr>
                         <td><input type="submit" name="{{ row[0] }}" value="X" /></td>
                         {% for col in row %}
                             <td>{{ col }}</td>
                         {% endfor %}
-                        <td><a href="medlem/{{ row[0] }}">Se hold</a></td>
+                        <td><a href="traener/{{ row[0] }}">Se hold</a></td>
                     </tr>
                 {% endfor %}
             </table>
         </form>
+    
     </body>
     {% endblock %}
 

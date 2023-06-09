@@ -46,6 +46,15 @@ def medlemmer():
 
     return render_template('medlemmer.html', members=members, employees=employees)
 
+@app.route('/traenere')
+def traenere():
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM employees;")
+    employees = cur.fetchall()
+
+    return render_template('træner.html', employees=employees)
+
 @app.route('/add_medlem', methods=['POST'])
 def add_medlem():
     form_data = request.form
