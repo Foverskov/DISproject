@@ -259,102 +259,11 @@ def team_details():
                 """)
     team_employee = cur.fetchall()
 
-
-
-    page = ""
-    page += """
-    <style>
-        table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        }
-    </style>
-    """
-
-    page += f"""
-    <a href="/hold">Tilbage</a>
-    <h1>Hold {team_name}</h1>
-    <form action="delete_team" method = "POST">
-    <input type = "hidden" name = "tid" value = "{team_id}" />
-    <input type = "submit" value = "Slet hold" />
-    </form>"""
-
-    page += f"""
-    <form action="add_team_member" method = "POST">
-    <input type = "hidden" name = "tid" value = "{team_id}" />
-    <input type = "hidden" name = "name" value = "" />
-    <input type = "submit" value = "Tilføj medlem" />
-    </form>
-
-     <table>
-        <tr>
-            <th>Fjern</th>
-            <th>Medlems ID</th>
-            <th>Startdato</th>
-            <th>Slutdato</th>
-            <th>Navn</th>
-            <th>Alder</th>
-            <th>CPR</th>
-            <th>Adresse</th>
-            <th>Telefon</th>
-            <th>Email</th>
-        </tr>
-        <form action="remove_team_member" method = "POST">
-    """
-
-    for row in rows:
-            page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-            page += "<td>" + str(row[0]) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[1])).strftime('%d/%m-%Y')) + "</td>"
-            page += "<td>" + str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y')) + "</td>"
-            page += "<td>" + str(row[3]) + "</td>"
-            page += "<td>" + str(row[4]) + "</td>"
-            page += "<td>" + str(row[5]) + "</td>"
-            page += "<td>" + str(row[6]) + "</td>"
-            page += "<td>" + str(row[7]) + "</td>"
-            page += "<td>" + str(row[8]) + "</td>"
-            page += "</tr>"
-    page += "</form></table>"
-
-
-    # Holdets trænere
-    page += f"""
-    <h1>Trænere for {team_name}</h1>
-
-    <table>
-        <tr>
-            <form action="add_team_employee" method = "POST">
-            <th><input type = "submit" value = "Tilføj" /></th>
-            <th><input type = "text" name = "eid" /></th>
-            <input type = "hidden" name = "tid" value = "{team_id}" />
-            </form>
-        </tr>
-        <tr>
-            <th>Fjern</th>
-            <th>Træner ID</th>
-            <th>Navn</th>
-            <th>Alder</th>
-            <th>Telefon</th>
-            <th>Email</th>
-        </tr>
-        <form action="remove_team_employee" method = "POST">    
-    """
-
-    for row in team_employee:
-            page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-            page += "<td>" + str(row[0]) + "</td>"
-            page += "<td>" + str(row[1]) + "</td>"
-            page += "<td>" + str(row[2]) + "</td>"
-            page += "<td>" + str(row[3]) + "</td>"
-            page += "<td>" + str(row[4]) + "</td>"
-            page += "</tr>"
-    page += "</form></table>"
-
-
     cur.close()
     conn.close()
 
-    return page
+    return render_template('team_details.html', rows=rows, team_name=team_name, team_employee=team_employee, team_id=team_id, datetime=datetime)
+
 
 @app.route('/delete_team', methods=['POST'])
 def delete_team():
