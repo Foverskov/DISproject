@@ -40,100 +40,103 @@ def medlemmer():
     cur.execute("SELECT * FROM employees;")
     employees = cur.fetchall()
 
-    page = ""
-    page += """
-    <style>
-     table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    }
-    </style>
-    """
+
+    return render_template('medlemmer.html', members=members, employees=employees)
+
+    # page = ""
+    # page += """
+    # <style>
+    #  table, th, td {
+    # border: 1px solid black;
+    # border-collapse: collapse;
+    # }
+    # </style>
+    # """
     
-    # Oversigt medlemmer
-    page += """
-    <a href="/">Tilbage</a>
-    <h1>Medlemmer</h1>
-    <form action="add_medlem" method = "POST">
-        <table>
-            <tr>
-                <th><input type = "submit" value = "Tilføj" /></th>
-                <th></th>
-                <th> <input type = "text" name = "cpr" /></th>
-                <th><input type = "text" name = "name" /> </th>
-                <th><input type = "text" name = "age" /> </th>
-                <th><input type = "text" name = "addr" /></th>
-                <th><input type = "text" name = "tel" /></th>
-                <th><input type = "text" name = "email" /></th>
-                <th></th>
-            </tr>
-    </form>
-            <tr>
-                <th>DELETE</th>
-                <th>Medlems ID</th>
-                <th>CPR</th>
-                <th>Navn</th>
-                <th>Alder</th>
-                <th>Adresse</th>
-                <th>Telefon</th>
-                <th>Email</th>
-                <th>Se hold</th>
-            </tr>
-    <form action="remove_medlem" method = "POST">
-    """
+    # # Oversigt medlemmer
+    # page += """
+    # <a href="/">Tilbage</a>
+    # <h1>Medlemmer</h1>
+    # <form action="add_medlem" method = "POST">
+    #     <table>
+    #         <tr>
+    #             <th><input type = "submit" value = "Tilføj" /></th>
+    #             <th></th>
+    #             <th> <input type = "text" name = "cpr" /></th>
+    #             <th><input type = "text" name = "name" /> </th>
+    #             <th><input type = "text" name = "age" /> </th>
+    #             <th><input type = "text" name = "addr" /></th>
+    #             <th><input type = "text" name = "tel" /></th>
+    #             <th><input type = "text" name = "email" /></th>
+    #             <th></th>
+    #         </tr>
+    # </form>
+    #         <tr>
+    #             <th>DELETE</th>
+    #             <th>Medlems ID</th>
+    #             <th>CPR</th>
+    #             <th>Navn</th>
+    #             <th>Alder</th>
+    #             <th>Adresse</th>
+    #             <th>Telefon</th>
+    #             <th>Email</th>
+    #             <th>Se hold</th>
+    #         </tr>
+    # <form action="remove_medlem" method = "POST">
+    # """
 
-    for row in members:
-        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-        for col in row:
-            page += "<td>" + str(col) + "</td>"
-        page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
-        page += "</tr>"
+    # for row in members:
+    #     page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+    #     for col in row:
+    #         page += "<td>" + str(col) + "</td>"
+    #     page += f"""<td><a href="medlem/{row[0]}">Se hold</a></td>"""
+    #     page += "</tr>"
 
-    page += "</form></table>"
+    # page += "</form></table>"
 
-    # Oversigt Employees
-    page += """
-    <h1>Trænere</h1>
-    <form action="add_employee" method = "POST">
-        <table>
-            <tr>
-                <th><input type = "submit" value = "Tilføj" /></th>
-                <th></th>
-                <th> <input type = "text" name = "cpr" /></th>
-                <th><input type = "text" name = "name" /> </th>
-                <th><input type = "text" name = "age" /> </th>
-                <th><input type = "text" name = "addr" /></th>
-                <th><input type = "text" name = "tel" /></th>
-                <th><input type = "text" name = "email" /></th>
-            </tr>
-    </form>
-            <tr>
-                <th>DELETE</th>
-                <th>Employee ID</th>
-                <th>CPR</th>
-                <th>Navn</th>
-                <th>Alder</th>
-                <th>Adresse</th>
-                <th>Telefon</th>
-                <th>Email</th>
-                <th>Se hold</th>
-            </tr>
-    <form action="remove_employee" method = "POST">
-    """
+    # # Oversigt Employees
+    # page += """
+    # <h1>Trænere</h1>
+    # <form action="add_employee" method = "POST">
+    #     <table>
+    #         <tr>
+    #             <th><input type = "submit" value = "Tilføj" /></th>
+    #             <th></th>
+    #             <th> <input type = "text" name = "cpr" /></th>
+    #             <th><input type = "text" name = "name" /> </th>
+    #             <th><input type = "text" name = "age" /> </th>
+    #             <th><input type = "text" name = "addr" /></th>
+    #             <th><input type = "text" name = "tel" /></th>
+    #             <th><input type = "text" name = "email" /></th>
+    #         </tr>
+    # </form>
+    #         <tr>
+    #             <th>DELETE</th>
+    #             <th>Employee ID</th>
+    #             <th>CPR</th>
+    #             <th>Navn</th>
+    #             <th>Alder</th>
+    #             <th>Adresse</th>
+    #             <th>Telefon</th>
+    #             <th>Email</th>
+    #             <th>Se hold</th>
+    #         </tr>
+    # <form action="remove_employee" method = "POST">
+    # """
 
-    for row in employees:
-        page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
-        for col in row:
-            page += "<td>" + str(col) + "</td>"
-        page += f"""<td><a href="traener/{row[0]}">Se hold</a></td>"""
-        page += "</tr>"
+    # for row in employees:
+    #     page += f"""<tr><td><input type = "submit" name = "{row[0]}" value = "X"/></td>"""
+    #     for col in row:
+    #         page += "<td>" + str(col) + "</td>"
+    #     page += f"""<td><a href="traener/{row[0]}">Se hold</a></td>"""
+    #     page += "</tr>"
 
-    page += "</form></table>"
+    # page += "</form></table>"
 
-    cur.close()
-    conn.close()
+    # cur.close()
+    # conn.close()
 
-    return page
+    # return page
 
 @app.route('/add_medlem', methods=['POST'])
 def add_medlem():

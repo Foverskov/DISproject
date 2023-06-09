@@ -5,7 +5,101 @@
     {% block title %} Medlemmer {% endblock %}
     
     {% block content %}
+    <head>
+        <title>Medlemmer</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="/">Tilbage</a>
+        <h1>Medlemmer</h1>
     
+        <form action="add_medlem" method="POST">
+            <table>
+                <tr>
+                    <th><input type="submit" value="Tilføj" /></th>
+                    <th></th>
+                    <th><input type="text" name="cpr" /></th>
+                    <th><input type="text" name="name" /></th>
+                    <th><input type="text" name="age" /></th>
+                    <th><input type="text" name="addr" /></th>
+                    <th><input type="text" name="tel" /></th>
+                    <th><input type="text" name="email" /></th>
+                    <th></th>
+                </tr>
+            </table>
+        </form>
+    
+        <form action="remove_medlem" method="POST">
+            <table>
+                <tr>
+                    <th>DELETE</th>
+                    <th>Medlems ID</th>
+                    <th>CPR</th>
+                    <th>Navn</th>
+                    <th>Alder</th>
+                    <th>Adresse</th>
+                    <th>Telefon</th>
+                    <th>Email</th>
+                    <th>Se hold</th>
+                </tr>
+                {% for row in members %}
+                    <tr>
+                        <td><input type="submit" name="{{ row[0] }}" value="X" /></td>
+                        {% for col in row %}
+                            <td>{{ col }}</td>
+                        {% endfor %}
+                        <td><a href="medlem/{{ row[0] }}">Se hold</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </form>
+    
+        <form action="add_employee" method="POST">
+            <table>
+                <tr>
+                    <th><input type="submit" value="Tilføj" /></th>
+                    <th></th>
+                    <th><input type="text" name="cpr" /></th>
+                    <th><input type="text" name="name" /></th>
+                    <th><input type="text" name="age" /></th>
+                    <th><input type="text" name="addr" /></th>
+                    <th><input type="text" name="tel" /></th>
+                    <th><input type="text" name="email" /></th>
+                </tr>
+            </table>
+        </form>
+    
+        <form action="remove_employee" method="POST">
+            <table>
+                <tr>
+                    <th>DELETE</th>
+                    <th>Employee ID</th>
+                    <th>CPR</th>
+                    <th>Navn</th>
+                    <th>Alder</th>
+                    <th>Adresse</th>
+                    <th>Telefon</th>
+                    <th>Email</th>
+                    <th>Se hold</th>
+                </tr>
+                {% for row in employees %}
+                    <tr>
+                        <td><input type="submit" name="{{ row[0] }}" value="X" /></td>
+                        {% for col in row %}
+                            <td>{{ col }}</td>
+                        {% endfor %}
+                        <td><a href="traener/{{ row[0] }}">Se hold</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </form>
+    
+    </body>
     {% endblock %}
 
 </html>
