@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% extends "base.html" %}
+
+    {% block title %} Index {% endblock %}
+    
+    {% block content %}
+    <h1>Fejl 40 - Se mulige fejl nedenfor</h1> <br><br>
+    <h2>
+        Alle felter er ikke udfyldt <br>
+    </h2>
+    <p>
+        Du skal udfylde alle felterne for at kunne oprette et medlem
+    </p>
+    <h2>
+        Datofeltet er ikke udfyldt korrekt <br>
+    </h2>
+    <p>
+        Tjek om datofeltet er i formatet "DD/MM-YYYY" ved tilføjelse af medlemmer til et hold.<br><br>
+        Sørg også for, at slutdatoen ikke allered er passeret. 
+    </p>
+    <h2>
+        Medlemmet er allerede på holdet <br>
+    </h2>
+    <p>
+        Medlemmet er allerede på holdet, og kan derfor ikke tilføjes igen
+    </p>
+    <h2>
+        Der findes ikke noget træner med dette id <br>
+    </h2>
+    <p>
+        Der findes ikke noget træner med det indtastede id. Prøv med et mindre id.
+    </p>
+    {% endblock %}
+
+</html>
