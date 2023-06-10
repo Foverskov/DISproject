@@ -19,7 +19,7 @@ def connect_db():
                             password=db['password'], host=db['host'], port=db['port'])
     return conn
 
-# ERROR HANDLING ValueError
+""" # ERROR HANDLING ValueError
 @app.errorhandler(ValueError)
 def handle_value_error(e):
     return render_template('error.html'), 500
@@ -32,7 +32,7 @@ def handle_foreign_key_violation(e):
 # ERROR HANDLING psycopg2.errors.UniqueViolation
 @app.errorhandler(psycopg2.errors.UniqueViolation)
 def handle_unique_violation(e):
-    return render_template('error.html'), 500
+    return render_template('error.html'), 500 """
 
 
 @app.route('/')
@@ -395,7 +395,7 @@ def faciliteter():
     cur.close()
     conn.close()
 
-    return render_template('Faciliteter.html', bookings =bookings,facilities = facilities, booking_from_date = booking_from_date,booking_to_date=booking_to_date)
+    return render_template('Faciliteter.html', bookings =bookings,facilities = facilities, booking_from_date = booking_from_date,booking_to_date=booking_to_date,datetime=datetime)
 
 @app.route('/add_facility', methods=['POST'])
 def add_facility():
@@ -429,7 +429,7 @@ def facility_details():
     conn.commit()
     cur.close()
     conn.close()
-    return render_template('Facility_details.html' ,vej=vej, bookings=bookings,)
+    return render_template('Facility_details.html' ,vej=vej, bookings=bookings, datetime=datetime)
 
 @app.route('/delete_facility', methods=['POST'])
 def delete_facility():

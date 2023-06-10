@@ -74,8 +74,8 @@
                 <td> {{(row[0])}} </td>
                 <td> {{(row[1])}} </td>
                 <td> {{(row[2])}} </td>
-                <td> {{(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M'))}}</td>
-                <td> {{(datetime.fromtimestamp(int(row[4])).strftime('%d/%m-%Y %H:%M'))}}</td>
+                <td> {{(datetime.fromtimestamp(row[3]).strftime('%d/%m-%Y %H:%M'))}}</td>
+                <td> {{(datetime.fromtimestamp(row[4]).strftime('%d/%m-%Y %H:%M'))}}</td>
                 </tr>
         {%endfor %}
         </table>

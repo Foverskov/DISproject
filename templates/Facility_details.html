@@ -19,7 +19,7 @@
         <h1>Facilitet på {{vej}}</h1>
         
         <form action="delete_facility" method = "POST">
-            <input type = "hidden" name = "address" value = "{vej}" />
+            <input type = "hidden" name = "address" value = "{{vej}}" />
             <input type = "submit" value = "Slet"/>
         </form>
     
@@ -28,7 +28,7 @@
             <tr>
                 <td></td>
                 <td><input type = "text" name = "tid" /></td>
-                <input type = "hidden" name = "address" value = "{vej}" />
+                <input type = "hidden" name = "address" value = "{{vej}}" />
                 <td><input type = "text" name = "from_date" placeholder="dd/mm-yyyy HH:MM"/></td>
                 <td><input type = "text" name = "to_date" placeholder="dd/mm-yyyy HH:MM"/></td>
                 <td><input type = "submit" value = "Tilføj"/></td>
@@ -46,8 +46,8 @@
                 <tr> 
                     <td> {{row[0]}} </td>
                     <td> {{row[1]}}</td>
-                    <td> {{str(datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M'))}}</td>
-                    <td> {{str(datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M'))}}</td>
+                    <td> {{datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M')}}</td>
+                    <td> {{datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')}}</td>
                     <td><input type = "submit" name = "{(vej,row[1],row[2],row[3])}" value = "X"/></td>
                 </tr>
             {%endfor%}
