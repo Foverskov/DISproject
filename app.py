@@ -19,7 +19,7 @@ def connect_db():
                             password=db['password'], host=db['host'], port=db['port'])
     return conn
 
-""" # ERROR HANDLING ValueError
+# ERROR HANDLING ValueError
 @app.errorhandler(ValueError)
 def handle_value_error(e):
     return render_template('error.html'), 500
@@ -32,7 +32,7 @@ def handle_foreign_key_violation(e):
 # ERROR HANDLING psycopg2.errors.UniqueViolation
 @app.errorhandler(psycopg2.errors.UniqueViolation)
 def handle_unique_violation(e):
-    return render_template('error.html'), 500 """
+    return render_template('error.html'), 500
 
 
 @app.route('/')
