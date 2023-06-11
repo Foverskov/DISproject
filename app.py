@@ -279,8 +279,8 @@ def add_team_member():
     rows = cur.fetchall()
     
     #! Datoer skal være i format dd/mm-yyyy
-    #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
-    #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
+    #from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').timestamp()
+    #to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').timestamp()
 
     cur.close()
     conn.close() 
@@ -290,19 +290,16 @@ def add_team_member():
 @app.route('/add_member_to_team', methods=['POST'])
 def add_member_to_team():
     form_data = request.form
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y').strftime("%s")
-    
-    # Retrieve member ID and team ID from the form data
-    member_id = form_data.get('mid')
-    team_id = form_data.get('tid')
+    from_date = int(datetime.strptime(form_data['from_date'], '%d/%m-%Y').timestamp())
+    to_date = int(datetime.strptime(form_data['to_date'], '%d/%m-%Y').timestamp())
+    member_id, team_id = eval(list(form_data.keys())[2])
 
     conn = connect_db()
     cur = conn.cursor()
 
     # Check if member ID and team ID are valid
     if member_id is not None and team_id is not None:
-        cur.execute(f"INSERT INTO Memberships VALUES ({member_id}, {team_id}, {from_date}, {to_date});")
+        cur.execute(f"INSERT INTO Memberships VALUES ({int(member_id)}, {int(team_id)}, {from_date}, {to_date});")
         conn.commit()
         cur.close()
         conn.close()
@@ -374,8 +371,8 @@ def faciliteter():
     cur = conn.cursor()
 
     if request.method == 'GET' and request.args.get('from_date', '') != '' and request.args.get('to_date', '') != '':
-        booking_from_date = datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
-        booking_to_date = datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y %H:%M').strftime("%s")
+        booking_from_date = int(datetime.strptime(request.args.get('from_date', ''), '%d/%m-%Y %H:%M').timestamp())
+        booking_to_date = int(datetime.strptime(request.args.get('to_date', ''), '%d/%m-%Y %H:%M').timestamp())
     else:
         booking_from_date = -9223372036854775807 # Min int
         booking_to_date = 9223372036854775807 # Max int
@@ -414,7 +411,6 @@ def add_facility():
 def facility_details():
     form_data = request.form
     vej = list(form_data.keys())[0]
-
     conn = connect_db()
     cur = conn.cursor()
 
@@ -453,8 +449,8 @@ def add_booking():
     conn = connect_db()
     cur = conn.cursor()
 
-    from_date = datetime.strptime(form_data['from_date'], '%d/%m-%Y %H:%M').strftime("%s")
-    to_date = datetime.strptime(form_data['to_date'], '%d/%m-%Y %H:%M').strftime("%s")
+    from_date = int(datetime.strptime(form_data['from_date'], '%d/%m-%Y %H:%M').timestamp())
+    to_date = int(datetime.strptime(form_data['to_date'], '%d/%m-%Y %H:%M').timestamp())
 
     cur.execute(f"INSERT INTO Bookings (tid, address, from_date, to_date) VALUES ('{form_data['tid']}', '{form_data['address']}', '{from_date}', '{to_date}');")
     conn.commit()
@@ -469,6 +465,7 @@ def delete_booking():
     conn = connect_db()
     cur = conn.cursor()
 
+    print(form_data)
     addr, tid, from_time, to_time = eval(list(form_data.keys())[0])
 
     cur.execute(f"DELETE FROM Bookings WHERE tid = {tid} AND address = '{addr}' AND from_date = {from_time} AND to_date = {to_time};")

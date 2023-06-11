@@ -46,9 +46,9 @@
                 <tr> 
                     <td> {{row[0]}} </td>
                     <td> {{row[1]}}</td>
-                    <td> {{datetime.fromtimestamp(int(row[2])).strftime('%d/%m-%Y %H:%M')}}</td>
-                    <td> {{datetime.fromtimestamp(int(row[3])).strftime('%d/%m-%Y %H:%M')}}</td>
-                    <td><input type = "submit" name = "{(vej,row[1],row[2],row[3])}" value = "X"/></td>
+                    <td> {{datetime.fromtimestamp(row[2]).strftime('%d/%m-%Y %H:%M')}}</td>
+                    <td> {{datetime.fromtimestamp(row[3]).strftime('%d/%m-%Y %H:%M')}}</td>
+                    <td><input type="submit" value="X" name="{{(vej, row[1], row[2], row[3])}}" /></td>
                 </tr>
             {%endfor%}
         </form>

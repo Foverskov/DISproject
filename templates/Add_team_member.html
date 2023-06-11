@@ -24,8 +24,8 @@
         </form>
 
         <form action="add_member_to_team" method = "POST">
-            From date <input type = "text" name = "from_date" placeholder="DD/MM/YYYY"/>
-            To date <input type = "text" name = "to_date" placeholder="DD/MM/YYYY"/>
+            From date <input type = "text" name = "from_date" placeholder="DD/MM-YYYY"/>
+            To date <input type = "text" name = "to_date" placeholder="DD/MM-YYYY"/>
         <table>
                 <tr>
                     <th>Tilføj</th>
@@ -41,9 +41,7 @@
         {% for row in rows: %}
             <tr>
                 <td>
-                    <input type = "hidden" name = "mid" value = "{{row[0]}}" />
-                    <input type = "hidden" name = "tid" value = "{{team_id}}" />
-                    <input type = "submit" name = "Tilføj" value = "Tilføj" />
+                    <input type = "submit" name = "{{(row[0], team_id)}}" value = "Tilføj" />
                 </td>
                 <td>{{(row[0])}}</td>
                 <td>{{(row[1])}}</td>
